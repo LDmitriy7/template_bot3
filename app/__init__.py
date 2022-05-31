@@ -7,3 +7,5 @@ def init():
     handlers.setup()
     middlewares.setup()
     tasks.setup()
+
+    import config
