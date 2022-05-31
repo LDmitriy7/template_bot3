@@ -64,10 +64,15 @@ def run(
     if not os.path.exists(env):
         raise ValueError(f'{env} not found')
 
+    import logging
     from dotenv import load_dotenv
     import handlers
     import middlewares
     import tasks
+
+    logging.basicConfig(level=20)
+
+    logger.info('Starting up...')
 
     load_dotenv(env)
     handlers.setup()
