@@ -42,3 +42,7 @@ Command `. deploy.sh`
 ### Stopping:
 
 Command `. stop.sh`
+
+### Logs:
+
+Command `docker compose logs app`
