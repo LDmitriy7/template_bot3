@@ -1,2 +1,2 @@
 def setup():
-    pass
+    from . import misc

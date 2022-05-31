@@ -73,7 +73,7 @@ def run(
     logger.info('Starting up...')
 
     load_dotenv(env)
-    app.setup()
+    app.init()
 
     ctx.token = _get_env(BOT_TOKEN, required=True)
     ctx.parse_mode = parse_mode

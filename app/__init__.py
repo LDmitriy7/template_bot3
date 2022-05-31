@@ -3,7 +3,7 @@ from . import middlewares
 from . import tasks
 
 
-def setup():
+def init():
     handlers.setup()
     middlewares.setup()
     tasks.setup()
