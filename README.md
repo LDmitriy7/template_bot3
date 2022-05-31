@@ -8,8 +8,6 @@
 - `DB_HOST` [Required] - Mongo database host
 - `DB_NAME` [Required] - Mongo database name
 
----
-
 ## Running
 
 ### Requirements:
@@ -26,8 +24,6 @@
 
 Command `python app.py`
 
----
-
 ## Deploying
 
 ### Requirements:
@@ -40,5 +36,3 @@ Command `python app.py`
 1) Create environment file `.env`
 
 Command `. deploy.sh`
-
----
