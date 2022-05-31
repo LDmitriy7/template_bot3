@@ -66,9 +66,9 @@ def run(
 
     import logging
     from dotenv import load_dotenv
-    import handlers
-    import middlewares
-    import tasks
+    from app import handlers
+    from app import middlewares
+    from app import tasks
 
     logging.basicConfig(level=20)
 
