@@ -6,7 +6,7 @@
 - `DB_HOST` [Required] - Mongo database host
 - `DB_NAME` [Required] - Mongo database name
 
-## Running
+## Run
 
 ### Requirements:
 
@@ -14,32 +14,32 @@
 - `pipenv`
 - `mongo`
 
-### Preparing:
+### Prepare:
 
 1) Create environment file `.env`
 2) Command `pipenv install`
 3) Command `pipenv shell`
 
-### Entrypoint:
+### Start:
 
 Command `python app.py`
 
-## Deploying
+## Deploy
 
 ### Requirements:
 
 - `docker`
 - `docker-compose-plugin`
 
-### Preparing:
+### Prepare:
 
 1) Create environment file `.env`
 
-### Entrypoint:
+### Start:
 
 Command `. scripts/deploy.sh`
 
-### Stopping:
+### Stop:
 
 Command `. scripts/stop.sh`
 
