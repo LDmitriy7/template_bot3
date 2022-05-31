@@ -61,15 +61,15 @@ def run(
         protect_content: bool = None,
         poll_interval: float = 0.0,
 ):
+    if not os.path.exists(env):
+        raise ValueError(f'{env} not found')
+
     from dotenv import load_dotenv
     import handlers
     import middlewares
     import tasks
 
-    if not os.path.exists('.env'):
-        raise ValueError('.env not found')
-
-    load_dotenv()
+    load_dotenv(env)
     handlers.setup()
     middlewares.setup()
     tasks.setup()
