@@ -1,10 +1,12 @@
 services:
   app:
+    container_name: template-bot-app
     build:
       context: ..
       dockerfile: docker/Dockerfile
     restart: always
   mongo:
+    container_name: template-bot-mongo
     image: mongo
     restart: always
     volumes:
