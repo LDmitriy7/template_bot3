@@ -30,10 +30,12 @@ Command `python app.py`
 
 - `docker`
 - `docker-compose-plugin`
+- `bash`
 
 ### Prepare:
 
 1) Create environment file `.env`
+2) Open `bash`
 
 ### Start:
 
