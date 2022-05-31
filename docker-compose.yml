@@ -6,7 +6,7 @@ services:
     image: mongo
     restart: always
     volumes:
-      - mongo
+      - mongo:/data/db
 
 volumes:
-  - mongo:/data/db
+  mongo: null
