@@ -1,11 +1,5 @@
 # Template for telegram bots
 
-## Environment variables
-
-- `BOT_TOKEN` [Required] - Telegram bot token
-- `DB_HOST` [Required] - Mongo database host
-- `DB_NAME` [Required] - Mongo database name
-
 ## Run
 
 ### Requirements:
@@ -16,7 +10,7 @@
 
 ### Prepare:
 
-1) Create environment file `.env`
+1) Create file `.env` from `sample.env`
 2) Command `pipenv install`
 3) Command `pipenv shell`
 
@@ -34,7 +28,7 @@ Command `python app.py`
 
 ### Prepare:
 
-1) Create environment file `.env`
+1) Create file `.env` from `sample.env`
 2) Open `bash`
 
 ### Start:
