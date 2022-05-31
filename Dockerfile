@@ -2,9 +2,9 @@ FROM python:3.10.4
 
 WORKDIR /app
 
-COPY Pipfile.lock Pipfile.lock
-RUN pip3 install pipenv && pipenv install
+COPY requirements.txt requirements.txt
+RUN pip3 install -r requirements.txt
 
 COPY . .
 
-CMD pipenv run python app.py
+CMD python3 app.py
