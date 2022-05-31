@@ -20,6 +20,8 @@
 2) Command `pipenv install`
 3) Command `pipenv shell`
 
+### Entrypoint:
+
 Command `python app.py`
 
 ## Deploying
@@ -33,8 +35,10 @@ Command `python app.py`
 
 1) Create environment file `.env`
 
+### Entrypoint:
+
 Command `. deploy.sh`
 
 ### Stopping:
 
-1) Command `. stop.sh`
+Command `. stop.sh`
