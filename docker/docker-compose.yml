@@ -5,6 +5,8 @@ services:
       context: ..
       dockerfile: docker/Dockerfile
     restart: always
+    environment:
+      - DB_HOST=mongo
   mongo:
     container_name: template-bot-mongo
     image: mongo
