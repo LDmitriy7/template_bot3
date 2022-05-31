@@ -66,18 +66,14 @@ def run(
 
     import logging
     from dotenv import load_dotenv
-    from app import handlers
-    from app import middlewares
-    from app import tasks
+    import app
 
     logging.basicConfig(level=20)
 
     logger.info('Starting up...')
 
     load_dotenv(env)
-    handlers.setup()
-    middlewares.setup()
-    tasks.setup()
+    app.setup()
 
     ctx.token = _get_env(BOT_TOKEN, required=True)
     ctx.parse_mode = parse_mode

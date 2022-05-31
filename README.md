@@ -37,12 +37,12 @@ Command `python app.py`
 
 ### Entrypoint:
 
-Command `. deploy.sh`
+Command `. scripts/deploy.sh`
 
 ### Stopping:
 
-Command `. stop.sh`
+Command `. scripts/stop.sh`
 
 ### Logs:
 
-Command `docker compose logs app`
+Command `. scripts/logs.sh`
