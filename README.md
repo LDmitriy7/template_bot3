@@ -1,7 +1,5 @@
 # Template for telegram bots
 
----
-
 ## Environment variables
 
 - `BOT_TOKEN` [Required] - Telegram bot token
