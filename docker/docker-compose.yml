@@ -1,6 +1,6 @@
 services:
   app:
-    build: .
+    build: docker/Dockerfile
     restart: always
   mongo:
     image: mongo
