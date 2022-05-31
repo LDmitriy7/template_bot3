@@ -1,4 +1,4 @@
-FROM python-slim
+FROM python:3.10.4
 
 COPY Pipfile.lock Pipfile.lock
 RUN pip3 install pipenv && pipenv install
