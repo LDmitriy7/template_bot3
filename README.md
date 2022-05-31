@@ -34,3 +34,7 @@ Command `python app.py`
 1) Create environment file `.env`
 
 Command `. deploy.sh`
+
+### Stopping:
+
+1) Command `. stop.sh`
