@@ -1,3 +1,4 @@
 import os
+import logging
 
-print(f'{os.environ["DB_HOST"] = }')
+logging.info(f'{os.environ["DB_HOST"] = }')
