@@ -15,6 +15,11 @@ class Error(Exception):
     description: str
 
 
+@dataclass
+class Cancel(Exception):
+    description: str = None
+
+
 @contextmanager
 def suppress(*exceptions, log: bool = True, **log_kwargs):
     try:

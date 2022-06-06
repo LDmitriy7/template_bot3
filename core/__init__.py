@@ -6,3 +6,4 @@ from .handlers import *
 from .loader import bot, ctx, logger
 from .run import run
 from .utils import env
+from .middlewares import *

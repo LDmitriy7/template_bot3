@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="main" pattern="file:api//*||file:app//*||file:config//*||file:core//*||file:kb//*||file:models//*||file:texts//*||file:__main__.py||file:loader.py" />
+</component>

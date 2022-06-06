@@ -27,12 +27,22 @@ class Task:
 class Bot:
     def __init__(self):
         self.handlers: list[Handler] = []
+        self.pre_middlewares: list[Handler] = []
+        self.post_middlewares: list[Handler] = []
         self.tasks: list[Task] = []
         self.session = requests.Session()
 
     def add_handler(self, func: Func, filters: list[Filter] = None):
         handler = Handler(func, filters or [])
         self.handlers.append(handler)
+
+    def add_pre_middleware(self, func: Func, filters: list[Filter] = None):
+        handler = Handler(func, filters or [])
+        self.pre_middlewares.append(handler)
+
+    def add_post_middleware(self, func: Func, filters: list[Filter] = None):
+        handler = Handler(func, filters or [])
+        self.post_middlewares.append(handler)
 
     def request(self, method: str, params: dict) -> dict | list | bool | str | int:
         from .loader import ctx

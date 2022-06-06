@@ -1,12 +1,6 @@
-import logging
-import os
-
 from core import env
 
-DB_HOST = os.environ.get('DB_HOST', 'localhost')
-DB_NAME = os.environ.get('DB_NAME', 'TemplateBot')
-
-logging.info(f'{DB_HOST = }')
+ENABLE_STUB = env.get_bool('ENABLE_STUB', False)
 
 
 class Admins:

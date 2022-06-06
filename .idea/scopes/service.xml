@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="service" pattern="file:.env||file:.gitignore||file:docker-compose.yml||file:Dockerfile||file:Pipfile||file:Pipfile.lock||file:README.md||file:sample.env||file:scripts//*" />
+</component>

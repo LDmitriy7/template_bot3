@@ -1,21 +1,38 @@
 import time
 
+from . import errors
 from .api_methods import *
 from .api_types import Update
 from .loader import logger
+
+
+def _check_handlers(update: Update):
+    for handler in bot.handlers:
+        for f in handler.filters:
+            if not f.check(update):
+                break
+        else:
+            result = handler.func()
+            return result
+
+
+def _check_pre_middlewares(update: Update):
+    for handler in bot.pre_middlewares:
+        for f in handler.filters:
+            if not f.check(update):
+                break
+        else:
+            handler.func()
 
 
 def _process_update(update: Update):
     ctx.update = update
 
     try:
-        for handler in bot.handlers:
-            for f in handler.filters:
-                if not f.check(update):
-                    break
-            else:
-                result = handler.func()
-                return result
+        _check_pre_middlewares(update)
+        return _check_handlers(update)
+    except errors.Cancel:
+        pass
     except Exception as e:
         logger.exception(e)
 

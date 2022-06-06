@@ -41,6 +41,18 @@ class Env:
             raise ValueError(f'You must set env ${key}')
         return value
 
+    def get_bool(self, key: str, default: T = ...) -> bool | T:
+        """Return variable (bool) or default [if specified]"""
+        value = self.get(key, default)
+
+        if value in ['True', 'true', '1']:
+            return True
+        elif value in ['False', 'false', '0']:
+            return False
+        elif value == default:
+            return default
+        raise ValueError(f'Can\'t cast env ${key} to bool')
+
     def get_int(self, key: str, default: T = ...) -> int | T:
         """Return variable (int) or default [if specified]"""
         value = self.get(key, default)
