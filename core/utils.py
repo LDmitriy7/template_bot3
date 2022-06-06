@@ -1,3 +1,4 @@
+import os
 from typing import TypeVar
 
 from pydantic import BaseModel
@@ -27,3 +28,54 @@ def listify(obj: T) -> T | list[T]:
         return list(obj)
 
     return [obj]
+
+
+class Env:
+    _env = os.environ
+
+    def get(self, key: str, default: T = ...) -> str | T:
+        """Return variable (str) or default [if specified]"""
+        value = self._env.get(key, default)
+
+        if value is ...:
+            raise ValueError(f'You must set env ${key}')
+        return value
+
+    def get_int(self, key: str, default: T = ...) -> int | T:
+        """Return variable (int) or default [if specified]"""
+        value = self.get(key, default)
+
+        try:
+            return int(value)
+        except:
+            if value == default:
+                return default
+
+        raise ValueError(f'Can\'t cast env ${key} to int')
+
+    def get_list(self, key: str, default: T = ..., sep: str = ',') -> list[str] | T:
+        """Return variable (list of str) or default [if specified]"""
+        value = self.get(key, default)
+
+        try:
+            return [i.strip() for i in value.strip(sep).split(sep)]
+        except:
+            if value == default:
+                return default
+
+        raise ValueError(f'Can\'t cast env ${key} to list')
+
+    def get_int_list(self, key: str, default: T = ..., sep: str = ',') -> list[int] | T:
+        """Return variable (list of int) or default [if specified]"""
+        value = self.get(key, default)
+
+        try:
+            return [int(i.strip()) for i in value.strip(sep).split(sep)]
+        except:
+            if value == default:
+                return default
+
+        raise ValueError(f'Can\'t cast env ${key} to list of int')
+
+
+env = Env()

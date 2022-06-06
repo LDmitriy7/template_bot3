@@ -2,7 +2,7 @@ from collections import defaultdict
 from contextvars import ContextVar
 from dataclasses import dataclass
 
-from .types import *
+from .api_types import *
 
 UPDATE = ContextVar('UPDATE')
 

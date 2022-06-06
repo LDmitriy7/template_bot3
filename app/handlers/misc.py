@@ -29,5 +29,3 @@ def test():
 
 
 print(bot.handlers)
-
-# print(get_updates())

@@ -10,13 +10,12 @@
 
 ### Prepare:
 
-1) Create file `.env` from `sample.env`
+1) Create file `.env` using `sample.env`
 2) Command `pipenv install`
-3) Command `pipenv shell`
 
 ### Start:
 
-Command `python app.py`
+Command `pipenv run python app.py`
 
 ## Deploy
 
@@ -28,7 +27,7 @@ Command `python app.py`
 
 ### Prepare:
 
-1) Create file `.env` from `sample.env`
+1) Create file `.env` using `sample.env`
 2) Open `bash`
 
 ### Start:
@@ -42,3 +41,12 @@ Command `. scripts/stop.sh`
 ### Logs:
 
 Command `. scripts/logs.sh`
+
+### Get into containers:
+
+- Command `. scripts/app.sh`
+- Command `. scripts/mongo.sh`
+
+### Get dump (./dump):
+
+Command `. scripts/mongodump.sh`

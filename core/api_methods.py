@@ -1,5 +1,5 @@
 from .loader import bot, ctx
-from .types import *
+from .api_types import *
 
 
 def _get_param(value, default):

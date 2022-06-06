@@ -4,6 +4,7 @@ from typing import Callable, Any
 
 import requests
 
+from . import c as c
 from . import utils, errors
 from .filters import Filter
 
@@ -18,9 +19,15 @@ class Handler:
     filters: list[Filter]
 
 
+@dataclass
+class Task:
+    func: Func
+
+
 class Bot:
     def __init__(self):
         self.handlers: list[Handler] = []
+        self.tasks: list[Task] = []
         self.session = requests.Session()
 
     def add_handler(self, func: Func, filters: list[Filter] = None):
@@ -37,7 +44,7 @@ class Bot:
         resp = self.session.post(url, json=params)
         result: dict = resp.json()
 
-        if result['ok']:
-            return result['result']
+        if result[c.OK]:
+            return result[c.RESULT]
         else:
-            raise errors.Error(result['error_code'], result['description'])
+            raise errors.Error(result[c.ERROR_CODE], result[c.DESCRIPTION])

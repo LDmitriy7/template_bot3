@@ -1,22 +1,8 @@
-import os
 import time
 
+from .api_methods import *
+from .api_types import Update
 from .loader import logger
-from .methods import *
-from .types import Update
-
-LOG_LEVEL = 'LOG_LEVEL'
-BOT_TOKEN = 'BOT_TOKEN'
-LOG_FILE = 'LOG_FILE'
-
-
-def _get_env(key: str, default=None, required: bool = False):
-    value = os.environ.get(key, default)
-
-    if required and value is None:
-        raise ValueError(f'You must set ${key}')
-
-    return value
 
 
 def _process_update(update: Update):
@@ -43,39 +29,32 @@ def _start_polling(poll_interval: float):
     offset = None
 
     while True:
-        updates = get_updates(offset=offset)
+        try:
+            updates = get_updates(offset=offset)
 
-        if updates:
-            logger.info(updates)
-            _process_updates(updates)
-            offset = updates[-1].update_id + 1
+            if updates:
+                logger.info(updates)
+                _process_updates(updates)
+                offset = updates[-1].update_id + 1
 
-        time.sleep(poll_interval)
+            time.sleep(poll_interval)
+        except Exception as e:
+            logger.exception(e)
 
 
 def run(
-        env: str = '.env',
         parse_mode: str = None,
         disable_web_page_preview: bool = None,
         disable_notification: bool = None,
         protect_content: bool = None,
         poll_interval: float = 0.0,
 ):
-    if not os.path.exists(env):
-        raise ValueError(f'{env} not found')
-
-    import logging
-    from dotenv import load_dotenv
     import app
 
-    logging.basicConfig(level=20)
+    app.init()
 
     logger.info('Starting up...')
 
-    load_dotenv(env)
-    app.init()
-
-    ctx.token = _get_env(BOT_TOKEN, required=True)
     ctx.parse_mode = parse_mode
     ctx.disable_web_page_preview = disable_web_page_preview
     ctx.disable_notification = disable_notification

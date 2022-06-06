@@ -2,7 +2,7 @@ from contextlib import suppress
 from dataclasses import dataclass
 
 from . import utils
-from .types import Update
+from .api_types import Update
 
 
 @dataclass
