@@ -1,4 +1,4 @@
-from . import commands
+from assets import commands
 from . import handlers
 from . import middlewares
 from . import tasks

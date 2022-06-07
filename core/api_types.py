@@ -5,7 +5,7 @@ from typing import Union
 from pydantic import BaseModel, Field
 
 __all__ = [
-    'Type',
+    'ApiType',
     'Update',
     'WebhookInfo',
     'User',
@@ -142,14 +142,14 @@ __all__ = [
 ]
 
 
-class Type(BaseModel):
+class ApiType(BaseModel):
     pass
 
 
 # === Getting updates
 
 
-class Update(Type):
+class Update(ApiType):
     update_id: int
     message: Message = None
     edited_message: Message = None
@@ -167,7 +167,7 @@ class Update(Type):
     chat_join_request: ChatJoinRequest = None
 
 
-class WebhookInfo(Type):
+class WebhookInfo(ApiType):
     url: str
     has_custom_certificate: bool
     pending_update_count: int
@@ -181,7 +181,7 @@ class WebhookInfo(Type):
 
 # === Available types
 
-class User(Type):
+class User(ApiType):
     id: int
     is_bot: bool
     first_name: str
@@ -193,7 +193,7 @@ class User(Type):
     supports_inline_queries: bool = None
 
 
-class Chat(Type):
+class Chat(ApiType):
     id: int
     type: str
     title: str = None
@@ -216,7 +216,7 @@ class Chat(Type):
     location: ChatLocation = None
 
 
-class Message(Type):
+class Message(ApiType):
     message_id: int
     from_user: User = Field(default=None, alias='from')
     sender_chat: Chat = None
@@ -278,11 +278,11 @@ class Message(Type):
     reply_markup: InlineKeyboardMarkup = None
 
 
-class MessageId(Type):
+class MessageId(ApiType):
     message_id: int
 
 
-class MessageEntity(Type):
+class MessageEntity(ApiType):
     type: str
     offset: int
     length: int
@@ -291,7 +291,7 @@ class MessageEntity(Type):
     language: str = None
 
 
-class PhotoSize(Type):
+class PhotoSize(ApiType):
     file_id: str
     file_unique_id: str
     width: int
@@ -299,7 +299,7 @@ class PhotoSize(Type):
     file_size: int = None
 
 
-class Animation(Type):
+class Animation(ApiType):
     file_id: str
     file_unique_id: str
     width: int
@@ -311,7 +311,7 @@ class Animation(Type):
     file_size: int = None
 
 
-class Audio(Type):
+class Audio(ApiType):
     file_id: str
     file_unique_id: str
     duration: int
@@ -323,7 +323,7 @@ class Audio(Type):
     thumb: PhotoSize = None
 
 
-class Document(Type):
+class Document(ApiType):
     file_id: str
     file_unique_id: str
     thumb: PhotoSize = None
@@ -332,7 +332,7 @@ class Document(Type):
     file_size: int = None
 
 
-class Video(Type):
+class Video(ApiType):
     file_id: str
     file_unique_id: str
     width: int
@@ -344,7 +344,7 @@ class Video(Type):
     file_size: int = None
 
 
-class VideoNote(Type):
+class VideoNote(ApiType):
     file_id: str
     file_unique_id: str
     length: int
@@ -353,7 +353,7 @@ class VideoNote(Type):
     file_size: int = None
 
 
-class Voice(Type):
+class Voice(ApiType):
     file_id: str
     file_unique_id: str
     duration: int
@@ -361,7 +361,7 @@ class Voice(Type):
     file_size: int = None
 
 
-class Contact(Type):
+class Contact(ApiType):
     phone_number: str
     first_name: str
     last_name: str = None
@@ -369,23 +369,23 @@ class Contact(Type):
     vcard: str = None
 
 
-class Dice(Type):
+class Dice(ApiType):
     emoji: str
     value: int
 
 
-class PollOption(Type):
+class PollOption(ApiType):
     text: str
     voter_count: int
 
 
-class PollAnswer(Type):
+class PollAnswer(ApiType):
     poll_id: str
     user: User
     option_ids: list[int]
 
 
-class Poll(Type):
+class Poll(ApiType):
     id: str
     question: str
     options: list[PollOption]
@@ -401,7 +401,7 @@ class Poll(Type):
     close_date: int = None
 
 
-class Location(Type):
+class Location(ApiType):
     longitude: float
     latitude: float
     horizontal_accuracy: float = None
@@ -410,7 +410,7 @@ class Location(Type):
     proximity_alert_radius: int = None
 
 
-class Venue(Type):
+class Venue(ApiType):
     location: Location
     title: str
     address: str
@@ -420,54 +420,54 @@ class Venue(Type):
     google_place_type: str = None
 
 
-class WebAppData(Type):
+class WebAppData(ApiType):
     data: str
     button_text: str
 
 
-class ProximityAlertTriggered(Type):
+class ProximityAlertTriggered(ApiType):
     traveler: User
     watcher: User
     distance: int
 
 
-class MessageAutoDeleteTimerChanged(Type):
+class MessageAutoDeleteTimerChanged(ApiType):
     message_auto_delete_time: int
 
 
-class VideoChatScheduled(Type):
+class VideoChatScheduled(ApiType):
     start_date: int
 
 
-class VideoChatStarted(Type):
+class VideoChatStarted(ApiType):
     pass
 
 
-class VideoChatEnded(Type):
+class VideoChatEnded(ApiType):
     duration: int
 
 
-class VideoChatParticipantsInvited(Type):
+class VideoChatParticipantsInvited(ApiType):
     users: list[User]
 
 
-class UserProfilePhotos(Type):
+class UserProfilePhotos(ApiType):
     total_count: int
     photos: list[list[PhotoSize]]
 
 
-class File(Type):
+class File(ApiType):
     file_id: str
     file_unique_id: str
     file_size: int = None
     file_path: str = None
 
 
-class WebAppInfo(Type):
+class WebAppInfo(ApiType):
     url: str
 
 
-class ReplyKeyboardMarkup(Type):
+class ReplyKeyboardMarkup(ApiType):
     keyboard: list[list[KeyboardButton]]
     resize_keyboard: bool = None
     one_time_keyboard: bool = None
@@ -475,7 +475,7 @@ class ReplyKeyboardMarkup(Type):
     selective: bool = None
 
 
-class KeyboardButton(Type):
+class KeyboardButton(ApiType):
     text: str
     request_contact: bool = None
     request_location: bool = None
@@ -483,20 +483,20 @@ class KeyboardButton(Type):
     web_app: WebAppInfo = None
 
 
-class KeyboardButtonPollType(Type):
+class KeyboardButtonPollType(ApiType):
     type: str = None
 
 
-class ReplyKeyboardRemove(Type):
+class ReplyKeyboardRemove(ApiType):
     remove_keyboard: bool
     selective: bool = None
 
 
-class InlineKeyboardMarkup(Type):
-    inline_keyboard: list[list[InlineKeyboardButton]]
+class InlineKeyboardMarkup(ApiType):
+    inline_keyboard: list[list[InlineKeyboardButton]] = []
 
 
-class InlineKeyboardButton(Type):
+class InlineKeyboardButton(ApiType):
     text: str
     url: str = None
     callback_data: str = None
@@ -508,14 +508,14 @@ class InlineKeyboardButton(Type):
     pay: bool = None
 
 
-class LoginUrl(Type):
+class LoginUrl(ApiType):
     url: str
     forward_text: str = None
     bot_username: str = None
     request_write_access: bool = None
 
 
-class CallbackQuery(Type):
+class CallbackQuery(ApiType):
     id: str
     from_user: User = Field(alias='from')
     message: Message = None
@@ -525,20 +525,20 @@ class CallbackQuery(Type):
     game_short_name: str = None
 
 
-class ForceReply(Type):
+class ForceReply(ApiType):
     force_reply: bool
     input_field_placeholder: str = None
     selective: bool = None
 
 
-class ChatPhoto(Type):
+class ChatPhoto(ApiType):
     small_file_id: str
     small_file_unique_id: str
     big_file_id: str
     big_file_unique_id: str
 
 
-class ChatInviteLink(Type):
+class ChatInviteLink(ApiType):
     invite_link: str
     creator: User
     creates_join_request: bool
@@ -550,7 +550,7 @@ class ChatInviteLink(Type):
     pending_join_request_count: int = None
 
 
-class ChatAdministratorRights(Type):
+class ChatAdministratorRights(ApiType):
     is_anonymous: bool
     can_manage_chat: bool
     can_delete_messages: bool
@@ -564,7 +564,7 @@ class ChatAdministratorRights(Type):
     can_pin_messages: bool = None
 
 
-class ChatMember(Type):
+class ChatMember(ApiType):
     status: str
     user: User
 
@@ -625,7 +625,7 @@ class ChatMemberBanned(ChatMember):
     until_date: int
 
 
-class ChatMemberUpdated(Type):
+class ChatMemberUpdated(ApiType):
     chat: Chat
     from_user: User = Field(alias='from')
     date: int
@@ -634,7 +634,7 @@ class ChatMemberUpdated(Type):
     invite_link: ChatInviteLink = None
 
 
-class ChatJoinRequest(Type):
+class ChatJoinRequest(ApiType):
     chat: Chat
     from_user: User = Field(alias='from')
     date: int
@@ -642,7 +642,7 @@ class ChatJoinRequest(Type):
     invite_link: ChatInviteLink = None
 
 
-class ChatPermissions(Type):
+class ChatPermissions(ApiType):
     can_send_messages: bool = None
     can_send_media_messages: bool = None
     can_send_polls: bool = None
@@ -653,17 +653,17 @@ class ChatPermissions(Type):
     can_pin_messages: bool = None
 
 
-class ChatLocation(Type):
+class ChatLocation(ApiType):
     location: Location
     address: str
 
 
-class BotCommand(Type):
+class BotCommand(ApiType):
     command: str
     description: str
 
 
-class BotCommandScope(Type):
+class BotCommandScope(ApiType):
     type: str
 
 
@@ -699,7 +699,7 @@ class BotCommandScopeChatMember(BotCommandScope):
     user_id: int
 
 
-class MenuButton(Type):
+class MenuButton(ApiType):
     pass
 
 
@@ -717,12 +717,12 @@ class MenuButtonDefault(MenuButton):
     type: str
 
 
-class ResponseParameters(Type):
+class ResponseParameters(ApiType):
     migrate_to_chat_id: int = None
     retry_after: int = None
 
 
-class InputMedia(Type):
+class InputMedia(ApiType):
     pass
 
 
@@ -781,14 +781,14 @@ class InputMediaDocument(InputMedia):
     disable_content_type_detection: bool = None
 
 
-class InputFile(Type):
+class InputFile(ApiType):
     pass
 
 
 # === Stickers
 
 
-class Sticker(Type):
+class Sticker(ApiType):
     file_id: str
     file_unique_id: str
     width: int
@@ -802,7 +802,7 @@ class Sticker(Type):
     file_size: int = None
 
 
-class StickerSet(Type):
+class StickerSet(ApiType):
     name: str
     title: str
     is_animated: bool
@@ -812,7 +812,7 @@ class StickerSet(Type):
     thumb: PhotoSize = None
 
 
-class MaskPosition(Type):
+class MaskPosition(ApiType):
     point: str
     x_shift: float
     y_shift: float
@@ -821,7 +821,7 @@ class MaskPosition(Type):
 
 # === Inline mode
 
-class InlineQuery(Type):
+class InlineQuery(ApiType):
     id: str
     from_user: User = Field(alias='from')
     query: str
@@ -830,7 +830,7 @@ class InlineQuery(Type):
     location: Location = None
 
 
-class InlineQueryResult(Type):
+class InlineQueryResult(ApiType):
     pass
 
 
@@ -1110,7 +1110,7 @@ class InlineQueryResultCachedAudio(InlineQueryResult):
     input_message_content: InputMessageContent = None
 
 
-class InputMessageContent(Type):
+class InputMessageContent(ApiType):
     pass
 
 
@@ -1171,7 +1171,7 @@ class InputInvoiceMessageContent(InputMessageContent):
     is_flexible: bool = None
 
 
-class ChosenInlineResult(Type):
+class ChosenInlineResult(ApiType):
     result_id: str
     from_user: User = Field(alias='from')
     location: Location = None
@@ -1179,19 +1179,19 @@ class ChosenInlineResult(Type):
     query: str
 
 
-class SentWebAppMessage(Type):
+class SentWebAppMessage(ApiType):
     inline_message_id: str = None
 
 
 # === Payments
 
 
-class LabeledPrice(Type):
+class LabeledPrice(ApiType):
     label: str
     amount: int
 
 
-class Invoice(Type):
+class Invoice(ApiType):
     title: str
     description: str
     start_parameter: str
@@ -1199,7 +1199,7 @@ class Invoice(Type):
     total_amount: int
 
 
-class ShippingAddress(Type):
+class ShippingAddress(ApiType):
     country_code: str
     state: str
     city: str
@@ -1208,20 +1208,20 @@ class ShippingAddress(Type):
     post_code: str
 
 
-class OrderInfo(Type):
+class OrderInfo(ApiType):
     name: str = None
     phone_number: str = None
     email: str = None
     shipping_address: ShippingAddress = None
 
 
-class ShippingOption(Type):
+class ShippingOption(ApiType):
     id: str
     title: str
     prices: list[LabeledPrice]
 
 
-class SuccessfulPayment(Type):
+class SuccessfulPayment(ApiType):
     currency: str
     total_amount: int
     invoice_payload: str
@@ -1231,14 +1231,14 @@ class SuccessfulPayment(Type):
     provider_payment_charge_id: str
 
 
-class ShippingQuery(Type):
+class ShippingQuery(ApiType):
     id: str
     from_user: User = Field(alias='from')
     invoice_payload: str
     shipping_address: ShippingAddress
 
 
-class PreCheckoutQuery(Type):
+class PreCheckoutQuery(ApiType):
     id: str
     from_user: User = Field(alias='from')
     currency: str
@@ -1250,19 +1250,19 @@ class PreCheckoutQuery(Type):
 
 # === Telegram Passport
 
-class PassportData(Type):
+class PassportData(ApiType):
     data: list[EncryptedPassportElement]
     credentials: EncryptedCredentials
 
 
-class PassportFile(Type):
+class PassportFile(ApiType):
     file_id: str
     file_unique_id: str
     file_size: int
     file_date: int
 
 
-class EncryptedPassportElement(Type):
+class EncryptedPassportElement(ApiType):
     type: str
     data: str = None
     phone_number: str = None
@@ -1275,13 +1275,13 @@ class EncryptedPassportElement(Type):
     hash: str
 
 
-class EncryptedCredentials(Type):
+class EncryptedCredentials(ApiType):
     data: str
     hash: str
     secret: str
 
 
-class PassportElementError(Type):
+class PassportElementError(ApiType):
     pass
 
 
@@ -1351,7 +1351,7 @@ class PassportElementErrorUnspecified(PassportElementError):
 
 # === Games
 
-class Game(Type):
+class Game(ApiType):
     title: str
     description: str
     photo: list[PhotoSize]
@@ -1360,7 +1360,7 @@ class Game(Type):
     animation: Animation = None
 
 
-class CallbackGame(Type):
+class CallbackGame(ApiType):
     user_id: int
     score: int
     force: bool = None
@@ -1370,7 +1370,7 @@ class CallbackGame(Type):
     inline_message_id: str = None
 
 
-class GameHighScore(Type):
+class GameHighScore(ApiType):
     position: int
     user: User
     score: int
@@ -1378,5 +1378,5 @@ class GameHighScore(Type):
 
 # fix pydantic errors
 for i in __all__:
-    _type: Type = locals()[i]
+    _type: ApiType = locals()[i]
     _type.update_forward_refs()

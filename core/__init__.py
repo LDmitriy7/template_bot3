@@ -1,6 +1,7 @@
 from . import c
 from . import errors
 from .api_methods import *
+from .my_types import *
 from .api_types import *
 from .handlers import *
 from .loader import bot, ctx, logger

@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 from . import utils
 from .api_types import Update
+from .my_types import CallbackButton
 
 
 @dataclass
@@ -120,3 +121,16 @@ class State(Filter):
         state = ctx.storage[main_key].get('state')
 
         return self.value == '*' or state == self.value
+
+
+@dataclass
+class Button(Filter):
+    value: CallbackButton
+
+    def check(self, update: Update):
+        try:
+            button_id = update.callback_query.data
+            button = CallbackButton.get(button_id)
+            return button.text == self.value.text and button.data == self.value.data
+        except (KeyError, AttributeError):
+            return False

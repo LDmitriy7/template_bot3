@@ -1,5 +1,6 @@
 from .loader import bot, ctx
 from .api_types import *
+from .my_types import *
 
 
 def _get_param(value, default):
@@ -18,7 +19,7 @@ def send_message(
         protect_content: bool = None,
         reply_to_message_id: int = None,
         allow_sending_without_reply: bool = None,
-        reply_markup: InlineKeyboardMarkup | ReplyKeyboardMarkup | ReplyKeyboardRemove | ForceReply = None,
+        reply_markup: InlineKeyboard | InlineKeyboardMarkup | ReplyKeyboardMarkup | ReplyKeyboardRemove | ForceReply = None,
 ) -> Message:
     chat_id = _get_param(chat_id, ctx.chat_id)
     parse_mode = _get_param(parse_mode, ctx.parse_mode)
@@ -114,7 +115,7 @@ def copy_message(
         protect_content: bool = None,
         reply_to_message_id: int = None,
         allow_sending_without_reply: bool = None,
-        reply_markup: InlineKeyboardMarkup | ReplyKeyboardMarkup | ReplyKeyboardRemove | ForceReply = None,
+        reply_markup: InlineKeyboard | InlineKeyboardMarkup | ReplyKeyboardMarkup | ReplyKeyboardRemove | ForceReply = None,
 ) -> MessageId:
     from_chat_id = _get_param(from_chat_id, ctx.chat_id)
     message_id = _get_param(message_id, ctx.message_id)

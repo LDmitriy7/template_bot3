@@ -1,5 +1,6 @@
 from . import filters
 from .loader import bot
+from .my_types import *
 
 
 def on_text(
@@ -101,5 +102,28 @@ def on_message(
 
     return _
 
-# def on_button(value: str = None):
-#     ...
+
+def on_button(
+        value: CallbackButton = None,
+        user_id: int | list[int] = None,
+        chat_type: str | list[str] = None,
+        state: str = None,
+):
+    fs = []
+
+    if value:
+        fs.append(filters.Button(value))
+
+    if user_id:
+        fs.append(filters.UserId(user_id))
+
+    if chat_type:
+        fs.append(filters.ChatType(chat_type))
+
+    fs.append(filters.State(state))
+
+    def _(func):
+        bot.add_handler(func, fs)
+        return func
+
+    return _

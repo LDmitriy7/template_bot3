@@ -2,9 +2,11 @@ from collections import defaultdict
 from contextvars import ContextVar
 from dataclasses import dataclass
 
+from .my_types import *
 from .api_types import *
 
 UPDATE = ContextVar('UPDATE')
+BUTTON = ContextVar('BUTTON')
 
 
 @dataclass
@@ -34,6 +36,22 @@ class Context:
         """User.state"""
         main_key = (self.chat_id, self.user_id)
         return self.storage[main_key].get('state')
+
+    @state.setter
+    def state(self, value: str):
+        """User.state"""
+        main_key = (self.chat_id, self.user_id)
+        self.storage[main_key]['state'] = value
+
+    @property
+    def button(self) -> dict | None:
+        """CallbackQuery.button.args"""
+        try:
+            button_id = self.data
+            button = CallbackButton.get(button_id)
+            return button.args
+        except (KeyError, AttributeError):
+            return None
 
     @state.setter
     def state(self, value: str):

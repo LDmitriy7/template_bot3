@@ -1,30 +1,8 @@
+from assets import *
 from core import *
-from core.loader import ctx
 
 
-@on_command('start')
+@on_command(cmd.START, state='*')
 def welcome():
-    send_message('Hello, world')
-
-
-@on_text('menu')
-def menu():
-    send_message('Menu..')
-
-
-@on_text()
-def echo():
-    send_message(ctx.text)
-
-
-@on_data()
-def test():
-    send_message(f'Your data: {ctx.data}')
-
-
-# @on_button()
-# def test():
-#     send_message(f'Button {ctx.button.id}: {ctx.button}')
-#     send_message(f'UserId: {ctx.button["user_id"]}')
-
-
+    send_message(t.welcome)
+    send_message(t.ask_amount, reply_markup=kb.PayOptions())

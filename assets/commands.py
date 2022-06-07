@@ -1,4 +1,4 @@
-import config
+from assets import config
 from core import *
 
 START = 'start'

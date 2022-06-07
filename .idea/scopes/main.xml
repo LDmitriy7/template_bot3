@@ -1,3 +1,3 @@
 <component name="DependencyValidationManager">
-  <scope name="main" pattern="file:api//*||file:app//*||file:config//*||file:core//*||file:kb//*||file:models//*||file:texts//*||file:__main__.py||file:loader.py" />
+  <scope name="main" pattern="file[template_bot3]:app//*||file[template_bot3]:assets//*||file:__main__.py" />
 </component>
