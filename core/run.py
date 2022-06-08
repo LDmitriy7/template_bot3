@@ -1,6 +1,8 @@
 import time
+from importlib import import_module
+from pathlib import Path
 
-from . import errors
+from . import exceptions
 from .api_methods import *
 from .api_types import Update
 from .loader import logger
@@ -26,12 +28,12 @@ def _check_pre_middlewares(update: Update):
 
 
 def _process_update(update: Update):
-    ctx.update = update
+    context.update = update
 
     try:
         _check_pre_middlewares(update)
         return _check_handlers(update)
-    except errors.Cancel:
+    except exceptions.Cancel:
         pass
     except Exception as e:
         logger.exception(e)
@@ -59,6 +61,30 @@ def _start_polling(poll_interval: float):
             logger.exception(e)
 
 
+def _import_all(package: str):
+    dirname = package.replace('.', '/')
+    for f in Path(dirname).glob('*.py'):
+        if not f.stem.startswith('_'):
+            import_module(f'.{f.stem}', package)
+
+
+APP_MODULES = ['handlers', 'middlewares', 'tasks']
+
+
+def _init_app():
+    import app
+
+    if hasattr(app, 'init'):
+        app.init()
+    else:
+        for m_name in APP_MODULES:
+            m = import_module(f'app.{m_name}')
+            if hasattr(m, 'setup'):
+                m.setup()
+            else:
+                _import_all(f'app.{m_name}')
+
+
 def run(
         parse_mode: str = None,
         disable_web_page_preview: bool = None,
@@ -66,16 +92,14 @@ def run(
         protect_content: bool = None,
         poll_interval: float = 0.0,
 ):
-    import app
-
-    app.init()
+    _init_app()
 
     logger.info('Starting up...')
 
-    ctx.parse_mode = parse_mode
-    ctx.disable_web_page_preview = disable_web_page_preview
-    ctx.disable_notification = disable_notification
-    ctx.protect_content = protect_content
+    context.parse_mode = parse_mode
+    context.disable_web_page_preview = disable_web_page_preview
+    context.disable_notification = disable_notification
+    context.protect_content = protect_content
 
     try:
         _start_polling(poll_interval)

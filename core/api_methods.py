@@ -1,4 +1,4 @@
-from .loader import bot, ctx
+from .loader import bot, context
 from .api_types import *
 from .my_types import *
 
@@ -21,11 +21,11 @@ def send_message(
         allow_sending_without_reply: bool = None,
         reply_markup: InlineKeyboard | InlineKeyboardMarkup | ReplyKeyboardMarkup | ReplyKeyboardRemove | ForceReply = None,
 ) -> Message:
-    chat_id = _get_param(chat_id, ctx.chat_id)
-    parse_mode = _get_param(parse_mode, ctx.parse_mode)
-    disable_web_page_preview = _get_param(disable_web_page_preview, ctx.disable_web_page_preview)
-    disable_notification = _get_param(disable_notification, ctx.disable_notification)
-    protect_content = _get_param(protect_content, ctx.protect_content)
+    chat_id = _get_param(chat_id, context.chat_id)
+    parse_mode = _get_param(parse_mode, context.parse_mode)
+    disable_web_page_preview = _get_param(disable_web_page_preview, context.disable_web_page_preview)
+    disable_notification = _get_param(disable_notification, context.disable_notification)
+    protect_content = _get_param(protect_content, context.protect_content)
 
     result: dict = bot.request('sendMessage', locals())
     return Message(**result)
@@ -85,7 +85,7 @@ def answer_callback_query(
         url: str = None,
         cache_time: int = None,
 ) -> bool:
-    callback_query_id = _get_param(callback_query_id, ctx.callback_query_id)
+    callback_query_id = _get_param(callback_query_id, context.callback_query_id)
 
     result: bool = bot.request('AnswerCallbackQuery', locals())
     return result
@@ -98,7 +98,7 @@ def create_chat_invite_link(
         member_limit: int = None,
         creates_join_request: bool = None,
 ) -> ChatInviteLink:
-    chat_id = _get_param(chat_id, ctx.chat_id)
+    chat_id = _get_param(chat_id, context.chat_id)
 
     result: dict = bot.request('CreateChatInviteLink', locals())
     return ChatInviteLink(**result)
@@ -117,11 +117,11 @@ def copy_message(
         allow_sending_without_reply: bool = None,
         reply_markup: InlineKeyboard | InlineKeyboardMarkup | ReplyKeyboardMarkup | ReplyKeyboardRemove | ForceReply = None,
 ) -> MessageId:
-    from_chat_id = _get_param(from_chat_id, ctx.chat_id)
-    message_id = _get_param(message_id, ctx.message_id)
-    parse_mode = _get_param(parse_mode, ctx.parse_mode)
-    disable_notification = _get_param(disable_notification, ctx.disable_notification)
-    protect_content = _get_param(protect_content, ctx.protect_content)
+    from_chat_id = _get_param(from_chat_id, context.chat_id)
+    message_id = _get_param(message_id, context.message_id)
+    parse_mode = _get_param(parse_mode, context.parse_mode)
+    disable_notification = _get_param(disable_notification, context.disable_notification)
+    protect_content = _get_param(protect_content, context.protect_content)
 
     result = bot.request('CopyMessage', locals())
     return MessageId(**result)

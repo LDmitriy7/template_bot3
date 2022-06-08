@@ -10,10 +10,10 @@ from .utils import env
 dotenv.load_dotenv()
 
 bot = Bot()
-ctx = Context()
+context = Context()
 logger = logging.getLogger()
 
-ctx.token = env.get('BOT_TOKEN')
+context.token = env.get('BOT_TOKEN')
 
 me.connect(
     db=env.get('DB_NAME'),

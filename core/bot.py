@@ -4,8 +4,8 @@ from typing import Callable, Any
 
 import requests
 
-from . import c as c
-from . import utils, errors
+from . import constants as c
+from . import utils, exceptions
 from .filters import Filter
 
 Func = Callable[[], Any]
@@ -45,10 +45,10 @@ class Bot:
         self.post_middlewares.append(handler)
 
     def request(self, method: str, params: dict) -> dict | list | bool | str | int:
-        from .loader import ctx
+        from .loader import context
 
         params = utils.clear_params(params)
-        url = API_ENDPOINT.format(token=ctx.token, method=method)
+        url = API_ENDPOINT.format(token=context.token, method=method)
 
         logging.debug(f'Request {method} with params: {params}')
         resp = self.session.post(url, json=params)
@@ -57,4 +57,4 @@ class Bot:
         if result[c.OK]:
             return result[c.RESULT]
         else:
-            raise errors.Error(result[c.ERROR_CODE], result[c.DESCRIPTION])
+            raise exceptions.Error(result[c.ERROR_CODE], result[c.DESCRIPTION])

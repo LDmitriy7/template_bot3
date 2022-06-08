@@ -98,7 +98,7 @@ class State(Filter):
     value: str
 
     def check(self, update: Update):
-        from .loader import ctx
+        from .loader import context
 
         chat_id = None
         user_id = None
@@ -118,7 +118,7 @@ class State(Filter):
                 user_id = callback_query.from_user.id
 
         main_key = (chat_id, user_id)
-        state = ctx.storage[main_key].get('state')
+        state = context.storage[main_key].get('state')
 
         return self.value == '*' or state == self.value
 

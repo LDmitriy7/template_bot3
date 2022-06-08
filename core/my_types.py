@@ -50,7 +50,12 @@ class CallbackButton:
 
 
 class InlineKeyboard(MyType):
-    inline_keyboard: list[list[api_types.InlineKeyboardButton]]
+
+    def __init__(self):
+        self.inline_keyboard: list[list[api_types.InlineKeyboardButton]] = []
+
+    def add_row(self, *buttons: api_types.InlineKeyboardButton):
+        self.inline_keyboard.append(list(buttons))
 
     def to_dict(self):
         return api_types.InlineKeyboardMarkup(inline_keyboard=self.inline_keyboard).dict(exclude_none=True)

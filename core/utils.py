@@ -1,7 +1,6 @@
 import os
 from typing import TypeVar
 
-from pydantic import BaseModel
 from .api_types import ApiType
 from .my_types import MyType
 
