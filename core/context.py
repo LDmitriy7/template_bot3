@@ -44,12 +44,11 @@ class Context:
         self.storage[main_key]['state'] = value
 
     @property
-    def button(self) -> dict | None:
-        """CallbackQuery.button.args"""
+    def button(self) -> CallbackButton | None:
+        """CallbackQuery.button"""
         try:
             button_id = self.data
-            button = CallbackButton.get(button_id)
-            return button.args
+            return CallbackButton.get(button_id)
         except (KeyError, AttributeError):
             return None
 

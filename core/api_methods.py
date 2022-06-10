@@ -1,6 +1,8 @@
-from .loader import bot, context
 from .api_types import *
-from .my_types import *
+from .loader import bot, context
+
+
+# from .my_types import *
 
 
 def _get_param(value, default):
@@ -19,7 +21,7 @@ def send_message(
         protect_content: bool = None,
         reply_to_message_id: int = None,
         allow_sending_without_reply: bool = None,
-        reply_markup: InlineKeyboard | InlineKeyboardMarkup | ReplyKeyboardMarkup | ReplyKeyboardRemove | ForceReply = None,
+        reply_markup: InlineKeyboardMarkup | ReplyKeyboardMarkup | ReplyKeyboardRemove | ForceReply = None,
 ) -> Message:
     chat_id = _get_param(chat_id, context.chat_id)
     parse_mode = _get_param(parse_mode, context.parse_mode)
@@ -28,7 +30,7 @@ def send_message(
     protect_content = _get_param(protect_content, context.protect_content)
 
     result: dict = bot.request('sendMessage', locals())
-    return Message(**result)
+    return Message.from_dict(result)
 
 
 def get_updates(
@@ -38,13 +40,16 @@ def get_updates(
         allowed_updates: list[str] = None
 ) -> list[Update]:
     result = bot.request('GetUpdates', locals())
-    return [Update(**i) for i in result]
+    return [Update.from_dict(i) for i in result]
 
 
 def get_chat_member(
-        chat_id: int | str,
-        user_id: int,
+        chat_id: int | str = None,
+        user_id: int = None,
 ) -> ChatMember:
+    chat_id = _get_param(chat_id, context.chat_id)
+    user_id = _get_param(user_id, context.user_id)
+
     result: dict = bot.request('getChatMember', locals())
 
     def cast(chat_member: dict) -> ChatMember:
@@ -56,7 +61,7 @@ def get_chat_member(
             'left': ChatMemberLeft,
             'kicked': ChatMemberBanned,
         }[chat_member['status']]
-        return _Type(**chat_member)
+        return _Type.from_dict(chat_member)
 
     return cast(result)
 
@@ -66,7 +71,7 @@ def get_my_commands(
         language_code: str = None
 ) -> list[BotCommand]:
     result: list = bot.request('getMyCommands', locals())
-    return [BotCommand(**i) for (i) in result]
+    return [BotCommand.from_dict(i) for (i) in result]
 
 
 def set_my_commands(
@@ -101,7 +106,7 @@ def create_chat_invite_link(
     chat_id = _get_param(chat_id, context.chat_id)
 
     result: dict = bot.request('CreateChatInviteLink', locals())
-    return ChatInviteLink(**result)
+    return ChatInviteLink.from_dict(result)
 
 
 def copy_message(
@@ -115,7 +120,7 @@ def copy_message(
         protect_content: bool = None,
         reply_to_message_id: int = None,
         allow_sending_without_reply: bool = None,
-        reply_markup: InlineKeyboard | InlineKeyboardMarkup | ReplyKeyboardMarkup | ReplyKeyboardRemove | ForceReply = None,
+        reply_markup: InlineKeyboardMarkup | ReplyKeyboardMarkup | ReplyKeyboardRemove | ForceReply = None,
 ) -> MessageId:
     from_chat_id = _get_param(from_chat_id, context.chat_id)
     message_id = _get_param(message_id, context.message_id)
@@ -124,4 +129,4 @@ def copy_message(
     protect_content = _get_param(protect_content, context.protect_content)
 
     result = bot.request('CopyMessage', locals())
-    return MessageId(**result)
+    return MessageId.from_dict(result)

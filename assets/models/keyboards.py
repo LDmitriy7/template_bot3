@@ -1,7 +1,7 @@
 from core import *
 
 
-class PayOptions(InlineKeyboard):
+class PayOptions(InlineKeyboardMarkup):
     option = CallbackButton('{amount} RUB')
 
     def __init__(self):

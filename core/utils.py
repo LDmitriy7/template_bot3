@@ -9,9 +9,7 @@ T = TypeVar('T')
 
 def clear_params(params: dict) -> dict:
     def clear_obj(obj):
-        if isinstance(obj, ApiType):
-            return obj.dict(exclude_none=True)
-        if isinstance(obj, MyType):
+        if isinstance(obj, (ApiType, MyType)):
             return obj.to_dict()
         if isinstance(obj, list):
             return [clear_obj(i) for i in obj]

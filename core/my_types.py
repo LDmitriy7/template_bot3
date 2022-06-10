@@ -7,7 +7,7 @@ from . import api_types
 __all__ = [
     'MyType',
     'CallbackButton',
-    'InlineKeyboard',
+    # 'InlineKeyboard',
 ]
 
 
@@ -23,6 +23,9 @@ class CallbackButton:
         self.text = text
         self.data = data or text
         self.args = {}
+
+    def __getitem__(self, item):
+        return self.args[item]
 
     def save(self) -> str:
         string = f'{self.text}|{self.data}|{self.args}'
@@ -47,15 +50,3 @@ class CallbackButton:
             text=new_button.text.format(**args),
             callback_data=button_id,
         )
-
-
-class InlineKeyboard(MyType):
-
-    def __init__(self):
-        self.inline_keyboard: list[list[api_types.InlineKeyboardButton]] = []
-
-    def add_row(self, *buttons: api_types.InlineKeyboardButton):
-        self.inline_keyboard.append(list(buttons))
-
-    def to_dict(self):
-        return api_types.InlineKeyboardMarkup(inline_keyboard=self.inline_keyboard).dict(exclude_none=True)
