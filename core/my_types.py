@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 import hashlib
-from . import models
+
 from . import api_types
+from . import models
 
 __all__ = [
     'MyType',
     'CallbackButton',
-    # 'InlineKeyboard',
 ]
 
 
@@ -19,34 +19,44 @@ class MyType:
 
 class CallbackButton:
 
-    def __init__(self, text: str, data: str = None):
+    def __init__(self, text: str, button_id: str = None):
         self.text = text
-        self.data = data or text
-        self.args = {}
+        self.button_id = button_id or text
+        self._vars = {}
 
     def __getitem__(self, item):
-        return self.args[item]
+        return self._vars[item]
+
+    def get(self, item: str, default=None):
+        return self._vars.get(item, default)
+
+    def __contains__(self, item: str):
+        return item in self._vars
 
     def save(self) -> str:
-        string = f'{self.text}|{self.data}|{self.args}'
-        button_id = hashlib.md5(string.encode()).hexdigest()
-        models.CallbackButton(id=button_id, text=self.text, data=self.data, args=self.args).save()
-        return button_id
+        string = f'{self.text}|{self.button_id}|{self._vars}'
+        doc_id = hashlib.md5(string.encode()).hexdigest()
+        models.CallbackButton(_id=doc_id, text=self.text, button_id=self.button_id, vars=self._vars).save()
+        return doc_id
 
     @classmethod
-    def get(cls, button_id: str) -> CallbackButton | None:
-        button_doc: models.CallbackButton = models.CallbackButton.objects(id=button_id).first()
-        button = CallbackButton(button_doc.text, button_doc.data)
-        button.args = button_doc.args
+    def get_button(cls, doc_id: str) -> CallbackButton | None:
+        doc = models.CallbackButton.get_doc(_id=doc_id)
+
+        if not doc:
+            return None
+
+        button = CallbackButton(doc.text, doc.button_id)
+        button._vars = doc.vars
         return button
 
-    def __call__(self, **args: str | int | list | dict | set) -> api_types.InlineKeyboardButton:
-        """Return InlineKeyboardButton(text=text.format(**args), callback_data=button_id)"""
-        new_button = CallbackButton(self.text, self.data)
-        new_button.args = args
-        button_id = new_button.save()
+    def __call__(self, **_vars: str | int | list | dict | set) -> api_types.InlineKeyboardButton:
+        """Return InlineKeyboardButton(text=text.format(**args), callback_data=button_doc_id)"""
+        new_button = CallbackButton(self.text, self.button_id)
+        new_button._vars = _vars
+        doc_id = new_button.save()
 
         return api_types.InlineKeyboardButton(
-            text=new_button.text.format(**args),
-            callback_data=button_id,
+            text=new_button.text.format(**_vars),
+            callback_data=doc_id,
         )

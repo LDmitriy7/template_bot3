@@ -1,12 +1,12 @@
-from collections import defaultdict
 from contextvars import ContextVar
 from dataclasses import dataclass
 
-from .my_types import *
+from . import constants as c
+from . import models
 from .api_types import *
+from .my_types import *
 
 UPDATE = ContextVar('UPDATE')
-BUTTON = ContextVar('BUTTON')
 
 
 @dataclass
@@ -17,46 +17,52 @@ class Context:
     disable_notification: bool = None
     protect_content: bool = None
 
-    storage = defaultdict(dict)
+    def __setitem__(self, key: str, value):
+        # TODO: what if chat_id or user_id is None
+        storage = models.Storage.get(self.chat_id, self.user_id)
+        storage.data[key] = value
+        storage.save()
 
-    def __setattr__(self, key, value):
-        if key in __class__.__dict__:
-            super().__setattr__(key, value)
-        else:
-            # TODO: what if chat_id or user_id is None
-            main_key = (self.chat_id, self.user_id)
-            self.storage[main_key][key] = value
+    def __getitem__(self, item: str):
+        storage = models.Storage.get(self.chat_id, self.user_id)
+        return storage.data[item]
 
-    def __getattr__(self, item):
-        main_key = (self.chat_id, self.user_id)
-        return self.storage[main_key][item]
+    def __contains__(self, key: str):
+        storage = models.Storage.get(self.chat_id, self.user_id)
+        return key in storage.data
+
+    def get(self, item: str, default=None):
+        try:
+            return self[item]
+        except KeyError:
+            return default
+
+    def clear(self):
+        storage = models.Storage.get(self.chat_id, self.user_id)
+        storage.data.clear()
+        storage.save()
 
     @property
     def state(self) -> str | None:
         """User.state"""
-        main_key = (self.chat_id, self.user_id)
-        return self.storage[main_key].get('state')
+        storage = models.Storage.get(self.chat_id, self.user_id)
+        return storage.state
 
     @state.setter
     def state(self, value: str):
         """User.state"""
-        main_key = (self.chat_id, self.user_id)
-        self.storage[main_key]['state'] = value
+        storage = models.Storage.get(self.chat_id, self.user_id)
+        storage.state = value
+        storage.save()
 
     @property
     def button(self) -> CallbackButton | None:
         """CallbackQuery.button"""
         try:
             button_id = self.data
-            return CallbackButton.get(button_id)
+            return CallbackButton.get_button(button_id)
         except (KeyError, AttributeError):
             return None
-
-    @state.setter
-    def state(self, value: str):
-        """User.state"""
-        main_key = (self.chat_id, self.user_id)
-        self.storage[main_key]['state'] = value
 
     @property
     def update(self) -> Update | None:

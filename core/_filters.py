@@ -97,10 +97,30 @@ class Data(Filter):
 class State(Filter):
     value: str
 
-    def check(self, _):
+    def check(self, update: Update):
         from .loader import context
 
-        return self.value == '*' or context.state == self.value
+        chat_id = None
+        user_id = None
+
+        with suppress(AttributeError):
+            if message := update.message:
+                chat_id = message.chat.id
+            elif channel_post := update.channel_post:
+                chat_id = channel_post.chat.id
+            elif callback_query := update.callback_query:
+                chat_id = callback_query.message.chat.id
+
+        with suppress(AttributeError):
+            if message := update.message:
+                user_id = message.from_user.id
+            elif callback_query := update.callback_query:
+                user_id = callback_query.from_user.id
+
+        main_key = (chat_id, user_id)
+        state = context.storage[main_key].get('state')
+
+        return self.value == '*' or state == self.value
 
 
 @dataclass
@@ -111,6 +131,6 @@ class Button(Filter):
         try:
             button_id = update.callback_query.data
             button = CallbackButton.get_button(button_id)
-            return button.text == self.value.text and button.button_id == self.value.button_id
+            return button.text == self.value.text and button.id == self.value.id
         except (KeyError, AttributeError):
             return False

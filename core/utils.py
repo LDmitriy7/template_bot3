@@ -1,13 +1,13 @@
 import os
 from typing import TypeVar
 
-from .api_types import ApiType
-from .my_types import MyType
-
 T = TypeVar('T')
 
 
 def clear_params(params: dict) -> dict:
+    from .api_types import ApiType
+    from .my_types import MyType
+
     def clear_obj(obj):
         if isinstance(obj, (ApiType, MyType)):
             return obj.to_dict()

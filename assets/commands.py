@@ -6,6 +6,7 @@ CANCEL = 'cancel'
 BROADCAST = 'broadcast'
 LOGS = 'logs'
 RESTART = 'restart'
+TEST = 'test'
 
 USER_COMMANDS = [
     # BotCommand(command=START, description='Запустить бота'),
@@ -13,9 +14,10 @@ USER_COMMANDS = [
 ]
 
 ADMIN_COMMANDS = USER_COMMANDS + [
-    BotCommand(command=BROADCAST, description='Рассылка'),
-    BotCommand(command=LOGS, description='Логи'),
-    BotCommand(command=RESTART, description='Перезагрузка'),
+    # BotCommand(BROADCAST, 'Рассылка'),
+    # BotCommand(LOGS, 'Логи'),
+    # BotCommand(RESTART, 'Перезагрузка'),
+    BotCommand(TEST, 'Тест'),
 ]
 
 
@@ -24,4 +26,4 @@ def setup():
 
     for user_id in config.admins.ids:
         with exc.suppress(exc.Error, user_id=user_id):
-            set_my_commands(ADMIN_COMMANDS, scope=BotCommandScopeChat(chat_id=user_id))
+            set_my_commands(ADMIN_COMMANDS, scope=BotCommandScopeChat(user_id))

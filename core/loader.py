@@ -9,16 +9,16 @@ from .utils import env
 
 dotenv.load_dotenv()
 
+me.connect(
+    db=env.get('DB_NAME'),
+    host=env.get('DB_HOST', 'localhost'),
+)
+
 bot = Bot()
 context = Context()
 logger = logging.getLogger()
 
 context.token = env.get('BOT_TOKEN')
-
-me.connect(
-    db=env.get('DB_NAME'),
-    host=env.get('DB_HOST', 'localhost'),
-)
 
 logging.basicConfig(
     level=env.get_int('LOG_LEVEL', 30),

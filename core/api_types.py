@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field, asdict
-from typing import Union
+from dataclasses import dataclass, field, asdict, Field
+
+from . import utils
 
 __all__ = [
     'ApiType',
@@ -139,6 +140,7 @@ __all__ = [
     'CallbackGame',
     'GameHighScore',
 ]
+
 DATACLASS_FIELDS = '__dataclass_fields__'
 
 
@@ -153,14 +155,21 @@ class ApiType:
         for f in fields.values():
             f.type = eval(f.type)
 
+    @staticmethod
+    def get_field_types(f: Field):
+        return utils.listify(getattr(f.type, '__args__', f.type))
+
     def __post_init__(self):
         fields: dict = getattr(self, DATACLASS_FIELDS)
 
         for f_name, f in fields.items():
-            if issubclass(f.type, ApiType):
-                value = getattr(self, f_name)
-                if isinstance(value, dict):
-                    setattr(self, f_name, f.type.from_dict(value))
+            value = getattr(self, f_name)
+
+            if isinstance(value, dict):
+                for t in self.get_field_types(f):
+                    if issubclass(t, ApiType):
+                        setattr(self, f_name, t.from_dict(value))
+                        break
 
     @classmethod
     def from_dict(cls, d: dict):
@@ -781,19 +790,19 @@ class BotCommandScopeAllChatAdministrators(BotCommandScope):
 
 @dataclass
 class BotCommandScopeChat(BotCommandScope):
-    chat_id: Union[int, str]
+    chat_id: int | str
     type: str = 'chat'
 
 
 @dataclass
 class BotCommandScopeChatAdministrators(BotCommandScope):
-    chat_id: Union[int, str]
+    chat_id: int | str
     type: str = 'chat_administrators'
 
 
 @dataclass
 class BotCommandScopeChatMember(BotCommandScope):
-    chat_id: Union[int, str]
+    chat_id: int | str
     user_id: int
     type: str = 'chat_member'
 

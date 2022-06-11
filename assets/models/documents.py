@@ -4,8 +4,10 @@ from datetime import datetime
 
 import mongoengine as me
 
+from core import Document
 
-class Config(me.Document):
+
+class Config(Document):
     admins_ids: list[int] = me.ListField(me.IntField())
     log_file: str = me.StringField()
     log_level: int = me.IntField()
