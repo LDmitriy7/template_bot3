@@ -5,7 +5,7 @@ from pathlib import Path
 from . import exceptions
 from .api_methods import *
 from .api_types import Update
-from .loader import logger
+from .loader import logger, context as ctx
 
 
 def _check_handlers(update: Update):
@@ -27,12 +27,23 @@ def _check_pre_middlewares(update: Update):
             handler.func()
 
 
+def _check_post_middlewares(update: Update):
+    for handler in bot.post_middlewares:
+        for f in handler.filters:
+            if not f.check(update):
+                break
+        else:
+            handler.func()
+
+
 def _process_update(update: Update):
-    context.update = update
+    ctx.update = update
 
     try:
         _check_pre_middlewares(update)
-        return _check_handlers(update)
+        result = _check_handlers(update)
+        _check_post_middlewares(update)
+        return result
     except exceptions.Cancel:
         pass
     except Exception as e:
@@ -96,10 +107,10 @@ def run(
 
     logger.info('Starting up...')
 
-    context.parse_mode = parse_mode
-    context.disable_web_page_preview = disable_web_page_preview
-    context.disable_notification = disable_notification
-    context.protect_content = protect_content
+    ctx.parse_mode = parse_mode
+    ctx.disable_web_page_preview = disable_web_page_preview
+    ctx.disable_notification = disable_notification
+    ctx.protect_content = protect_content
 
     try:
         _start_polling(poll_interval)

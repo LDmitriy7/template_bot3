@@ -9,18 +9,16 @@ def on_text(
         chat_type: str | list[str] = None,
         state: str = None,
 ):
-    fs = []
-
-    if value:
-        fs.append(filters.Text(value))
+    fs = [
+        filters.Text(value),
+        filters.State(state),
+    ]
 
     if user_id:
         fs.append(filters.UserId(user_id))
 
     if chat_type:
         fs.append(filters.ChatType(chat_type))
-
-    fs.append(filters.State(state))
 
     def _(func):
         bot.add_handler(func, fs)
@@ -35,18 +33,16 @@ def on_command(
         chat_type: str | list[str] = None,
         state: str = None,
 ):
-    fs = []
-
-    if value:
-        fs.append(filters.Command(value))
+    fs = [
+        filters.Command(value),
+        filters.State(state),
+    ]
 
     if user_id:
         fs.append(filters.UserId(user_id))
 
     if chat_type:
         fs.append(filters.ChatType(chat_type))
-
-    fs.append(filters.State(state))
 
     def _(func):
         bot.add_handler(func, fs)
@@ -61,18 +57,16 @@ def on_data(
         chat_type: str | list[str] = None,
         state: str = None,
 ):
-    fs = []
-
-    if value:
-        fs.append(filters.Data(value))
+    fs = [
+        filters.Data(value),
+        filters.State(state),
+    ]
 
     if user_id:
         fs.append(filters.UserId(user_id))
 
     if chat_type:
         fs.append(filters.ChatType(chat_type))
-
-    fs.append(filters.State(state))
 
     def _(func):
         bot.add_handler(func, fs)
@@ -86,15 +80,16 @@ def on_message(
         chat_type: str | list[str] = None,
         state: str = None,
 ):
-    fs = [filters.Message()]
+    fs = [
+        filters.Message(),
+        filters.State(state),
+    ]
 
     if user_id:
         fs.append(filters.UserId(user_id))
 
     if chat_type:
         fs.append(filters.ChatType(chat_type))
-
-    fs.append(filters.State(state))
 
     def _(func):
         bot.add_handler(func, fs)
@@ -104,23 +99,21 @@ def on_message(
 
 
 def on_button(
-        value: CallbackButton = None,
+        value: CallbackButton | list[str],
         user_id: int | list[int] = None,
         chat_type: str | list[str] = None,
         state: str = None,
 ):
-    fs = []
-
-    if value:
-        fs.append(filters.Button(value))
+    fs = [
+        filters.Button(value),
+        filters.State(state),
+    ]
 
     if user_id:
         fs.append(filters.UserId(user_id))
 
     if chat_type:
         fs.append(filters.ChatType(chat_type))
-
-    fs.append(filters.State(state))
 
     def _(func):
         bot.add_handler(func, fs)

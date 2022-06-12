@@ -45,6 +45,7 @@ class Storage(Document):
     key: UserKey = me.EmbeddedDocumentField(UserKey, primary_key=True)
     state: str = me.StringField()
     data: dict = me.DictField()
+    lang: str = me.StringField()
 
     @classmethod
     def get(cls, chat_id: int, user_id: int) -> Storage:

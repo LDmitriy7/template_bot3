@@ -542,11 +542,15 @@ class WebAppInfo(ApiType):
 
 @dataclass
 class ReplyKeyboardMarkup(ApiType):
-    keyboard: list[list[KeyboardButton]]
+    keyboard: list[list[KeyboardButton]] = field(default_factory=list)
     resize_keyboard: bool = None
     one_time_keyboard: bool = None
     input_field_placeholder: str = None
     selective: bool = None
+
+    def add_row(self, *buttons: str | KeyboardButton):
+        buttons = [KeyboardButton(b) if isinstance(b, str) else b for b in buttons]
+        self.keyboard.append(buttons)
 
 
 @dataclass

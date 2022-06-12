@@ -1,13 +1,18 @@
 from __future__ import annotations
 
 import hashlib
+from dataclasses import dataclass
 
 from . import api_types
+from . import constants as c
 from . import models
 
 __all__ = [
     'MyType',
     'CallbackButton',
+    'UrlButton',
+    'Translations',
+    'State',
 ]
 
 
@@ -60,3 +65,38 @@ class CallbackButton:
             text=new_button.text.format(**_vars),
             callback_data=doc_id,
         )
+
+
+@dataclass
+class Translations:
+    default: str
+
+    def _get_default(self):
+        return getattr(self, c.DEFAULT)
+
+    def get(self, lang: str = c.DEFAULT):
+        if not lang:
+            return self._get_default()
+        return getattr(self, lang, self._get_default())
+
+
+class UrlButton:
+
+    def __init__(self, text: str, url: str):
+        self.text = text
+        self.url = url
+
+    def __call__(self) -> api_types.InlineKeyboardButton:
+        return api_types.InlineKeyboardButton(self.text, url=self.url)
+
+
+class State:
+
+    def __init__(self):
+        self._value = None
+
+    def __get__(self, instance, owner) -> str:
+        return self._value
+
+    def __set_name__(self, owner: type, name):
+        self._value = f'{owner.__name__}.{name}'

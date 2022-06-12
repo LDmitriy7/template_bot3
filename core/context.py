@@ -56,6 +56,19 @@ class Context:
         storage.save()
 
     @property
+    def lang(self) -> str | None:
+        """User.lang"""
+        storage = models.Storage.get(self.chat_id, self.user_id)
+        return storage.lang
+
+    @lang.setter
+    def lang(self, value: str):
+        """User.lang"""
+        storage = models.Storage.get(self.chat_id, self.user_id)
+        storage.lang = value
+        storage.save()
+
+    @property
     def button(self) -> CallbackButton | None:
         """CallbackQuery.button"""
         try:
@@ -135,6 +148,16 @@ class Context:
 
         if chat := self.chat:
             value = chat.id
+
+        return value
+
+    @property
+    def chat_type(self) -> int | None:
+        """Message.chat.type | ChannelPost.chat.type | CallbackQuery.chat.type"""
+        value = None
+
+        if chat := self.chat:
+            value = chat.type
 
         return value
 

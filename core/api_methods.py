@@ -1,8 +1,6 @@
 from .api_types import *
-from .loader import bot, context
-
-
-# from .my_types import *
+from .loader import bot, context as ctx
+from .my_types import *
 
 
 def _get_param(value, default):
@@ -11,8 +9,12 @@ def _get_param(value, default):
     return value
 
 
+def _get_translation(t: Translations):
+    return t.get(ctx.lang)
+
+
 def send_message(
-        text: str,
+        text: str | Translations,
         chat_id: int | str = None,
         parse_mode: str = None,
         entities: list[MessageEntity] = None,
@@ -23,11 +25,14 @@ def send_message(
         allow_sending_without_reply: bool = None,
         reply_markup: InlineKeyboardMarkup | ReplyKeyboardMarkup | ReplyKeyboardRemove | ForceReply = None,
 ) -> Message:
-    chat_id = _get_param(chat_id, context.chat_id)
-    parse_mode = _get_param(parse_mode, context.parse_mode)
-    disable_web_page_preview = _get_param(disable_web_page_preview, context.disable_web_page_preview)
-    disable_notification = _get_param(disable_notification, context.disable_notification)
-    protect_content = _get_param(protect_content, context.protect_content)
+    if isinstance(text, Translations):
+        text = _get_translation(text)
+
+    chat_id = _get_param(chat_id, ctx.chat_id)
+    parse_mode = _get_param(parse_mode, ctx.parse_mode)
+    disable_web_page_preview = _get_param(disable_web_page_preview, ctx.disable_web_page_preview)
+    disable_notification = _get_param(disable_notification, ctx.disable_notification)
+    protect_content = _get_param(protect_content, ctx.protect_content)
 
     result: dict = bot.request('sendMessage', locals())
     return Message.from_dict(result)
@@ -47,8 +52,8 @@ def get_chat_member(
         chat_id: int | str = None,
         user_id: int = None,
 ) -> ChatMember:
-    chat_id = _get_param(chat_id, context.chat_id)
-    user_id = _get_param(user_id, context.user_id)
+    chat_id = _get_param(chat_id, ctx.chat_id)
+    user_id = _get_param(user_id, ctx.user_id)
 
     result: dict = bot.request('getChatMember', locals())
 
@@ -84,13 +89,16 @@ def set_my_commands(
 
 
 def answer_callback_query(
-        text: str = None,
+        text: str | Translations = None,
         callback_query_id: str = None,
         show_alert: bool = None,
         url: str = None,
         cache_time: int = None,
 ) -> bool:
-    callback_query_id = _get_param(callback_query_id, context.callback_query_id)
+    if isinstance(text, Translations):
+        text = _get_translation(text)
+
+    callback_query_id = _get_param(callback_query_id, ctx.callback_query_id)
 
     result: bool = bot.request('AnswerCallbackQuery', locals())
     return result
@@ -103,7 +111,7 @@ def create_chat_invite_link(
         member_limit: int = None,
         creates_join_request: bool = None,
 ) -> ChatInviteLink:
-    chat_id = _get_param(chat_id, context.chat_id)
+    chat_id = _get_param(chat_id, ctx.chat_id)
 
     result: dict = bot.request('CreateChatInviteLink', locals())
     return ChatInviteLink.from_dict(result)
@@ -122,11 +130,35 @@ def copy_message(
         allow_sending_without_reply: bool = None,
         reply_markup: InlineKeyboardMarkup | ReplyKeyboardMarkup | ReplyKeyboardRemove | ForceReply = None,
 ) -> MessageId:
-    from_chat_id = _get_param(from_chat_id, context.chat_id)
-    message_id = _get_param(message_id, context.message_id)
-    parse_mode = _get_param(parse_mode, context.parse_mode)
-    disable_notification = _get_param(disable_notification, context.disable_notification)
-    protect_content = _get_param(protect_content, context.protect_content)
+    from_chat_id = _get_param(from_chat_id, ctx.chat_id)
+    message_id = _get_param(message_id, ctx.message_id)
+    parse_mode = _get_param(parse_mode, ctx.parse_mode)
+    disable_notification = _get_param(disable_notification, ctx.disable_notification)
+    protect_content = _get_param(protect_content, ctx.protect_content)
 
     result = bot.request('CopyMessage', locals())
     return MessageId.from_dict(result)
+
+
+def edit_message_text(
+        text: str | Translations,
+        chat_id: int | str = None,
+        message_id: int = None,
+        inline_message_id: str = None,
+        parse_mode: str = None,
+        entities: list[MessageEntity] = None,
+        disable_web_page_preview: bool = None,
+        reply_markup: InlineKeyboardMarkup = None,
+):
+    if isinstance(text, Translations):
+        text = _get_translation(text)
+
+    chat_id = _get_param(chat_id, ctx.chat_id)
+    parse_mode = _get_param(parse_mode, ctx.parse_mode)
+    disable_web_page_preview = _get_param(disable_web_page_preview, ctx.disable_web_page_preview)
+    message_id = _get_param(message_id, ctx.message_id)
+
+    result = bot.request('EditMessageText', locals())
+    if result is True:
+        return result
+    return Message.from_dict(result)

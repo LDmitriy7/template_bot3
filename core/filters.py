@@ -22,80 +22,74 @@ class Message(Filter):
 
 
 @dataclass
-class Text(Filter):
-    value: str
+class CallbackQuery(Filter):
 
     def check(self, update: Update):
-        try:
-            return update.message.text == self.value
-        except AttributeError:
-            return False
+        return bool(update.callback_query)
+
+
+@dataclass
+class Text(Filter):
+    value: str | None
+
+    def check(self, update: Update):
+        if message := update.message:
+            if self.value is None:
+                return bool(message.text)
+            return message.text == self.value
+
+        return False
 
 
 @dataclass
 class Command(Filter):
-    value: str
+    value: str | None
 
     def check(self, update: Update):
-        try:
-            return update.message.text == f'/{self.value}'
-        except AttributeError:
-            return False
+        if message := update.message:
+            if self.value is None:
+                return message.text.startswith('/')
+            return message.text == f'/{self.value}'
 
+        return False
 
-# @dataclass
-# class TextPost(Filter):
-#     def check(self, update):
-#         pass
 
 @dataclass
 class UserId(Filter):
     value: int | list[int]
 
-    def check(self, update: Update):
-        user_id = None
+    def check(self, _):
+        from .loader import context
 
-        with suppress(AttributeError):
-            if message := update.message:
-                user_id = message.from_user.id
-            elif callback_query := update.callback_query:
-                user_id = callback_query.from_user.id
-
-        return user_id in utils.listify(self.value)
+        return context.user_id in utils.listify(self.value)
 
 
 @dataclass
 class ChatType(Filter):
     value: str | list[str]
 
-    def check(self, update: Update):
-        chat_type = None
+    def check(self, _):
+        from loader import context
 
-        with suppress(AttributeError):
-            if message := update.message:
-                chat_type = message.chat.type
-            elif channel_post := update.channel_post:
-                chat_type = channel_post.chat.type
-            elif callback_query := update.callback_query:
-                chat_type = callback_query.message.chat.type
-
-        return chat_type in utils.listify(self.value)
+        return context.chat_type in utils.listify(self.value)
 
 
 @dataclass
 class Data(Filter):
-    value: str
+    value: str | None
 
     def check(self, update: Update):
-        try:
-            return update.callback_query.data == self.value
-        except AttributeError:
-            return False
+        if callback_query := update.callback_query:
+            if self.value is None:
+                return bool(callback_query.data)
+            return callback_query.data == self.value
+
+        return False
 
 
 @dataclass
 class State(Filter):
-    value: str
+    value: str | None
 
     def check(self, _):
         from .loader import context
@@ -105,12 +99,17 @@ class State(Filter):
 
 @dataclass
 class Button(Filter):
-    value: CallbackButton
+    value: CallbackButton | list[str]
 
-    def check(self, update: Update):
+    def check(self, _):
+        from .loader import context
+
+        if isinstance(self.value, list):
+            return context.text in self.value
+
         try:
-            button_id = update.callback_query.data
-            button = CallbackButton.get_button(button_id)
+            doc_id = context.data
+            button = CallbackButton.get_button(doc_id)
             return button.text == self.value.text and button.button_id == self.value.button_id
         except (KeyError, AttributeError):
             return False
