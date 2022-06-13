@@ -2,11 +2,11 @@ import time
 from importlib import import_module
 from pathlib import Path
 
-from . import exceptions
 from core.models.tg_methods import *
 from core.models.tg_objects import Update
-from .loader import logger
+from . import exceptions
 from .context import ctx
+from .loader import logger
 
 
 def _check_handlers(update: Update):

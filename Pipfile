@@ -9,6 +9,7 @@ pydantic = {extras = ["dotenv"], version = "*"}
 python-dotenv = "*"
 mongoengine = "*"
 my = "*"
+params = "*"
 
 [dev-packages]
 

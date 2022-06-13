@@ -8,7 +8,7 @@ from . import tg_objects
 from .. import constants as c
 
 __all__ = [
-    'MyType',
+    'NewObject',
     'CallbackButton',
     'UrlButton',
     'Translations',
@@ -16,7 +16,7 @@ __all__ = [
 ]
 
 
-class MyType:
+class NewObject:
 
     def to_dict(self) -> dict:
         pass

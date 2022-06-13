@@ -6,10 +6,10 @@ T = TypeVar('T')
 
 def clear_params(params: dict) -> dict:
     from core.models.tg_objects import TgObject
-    from core.models.new_objects import MyType
+    from core.models.new_objects import NewObject
 
     def clear_obj(obj):
-        if isinstance(obj, (TgObject, MyType)):
+        if isinstance(obj, (TgObject, NewObject)):
             return obj.to_dict()
         if isinstance(obj, list):
             return [clear_obj(i) for i in obj]
