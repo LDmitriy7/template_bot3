@@ -8,6 +8,8 @@ from . import constants as c
 from . import utils, exceptions
 from .filters import Filter
 
+__all__ = ['bot']
+
 Func = Callable[[], Any]
 
 API_ENDPOINT = 'https://api.telegram.org/bot{token}/{method}'
@@ -45,10 +47,10 @@ class Bot:
         self.post_middlewares.append(handler)
 
     def request(self, method: str, params: dict) -> dict | list | bool | str | int:
-        from .loader import context
+        from .context import ctx
 
         params = utils.clear_params(params)
-        url = API_ENDPOINT.format(token=context.token, method=method)
+        url = API_ENDPOINT.format(token=ctx.token, method=method)
 
         logging.debug(f'Request {method} with params: {params}')
         resp = self.session.post(url, json=params)
@@ -58,3 +60,6 @@ class Bot:
             return result[c.RESULT]
         else:
             raise exceptions.Error(result[c.ERROR_CODE], result[c.DESCRIPTION])
+
+
+bot = Bot()

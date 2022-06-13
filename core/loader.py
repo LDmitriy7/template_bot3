@@ -3,8 +3,7 @@ import logging
 import dotenv
 import mongoengine as me
 
-from .bot import Bot
-from .context import Context
+from .context import ctx
 from .utils import env
 
 dotenv.load_dotenv()
@@ -14,11 +13,9 @@ me.connect(
     host=env.get('DB_HOST', 'localhost'),
 )
 
-bot = Bot()
-context = Context()
 logger = logging.getLogger()
 
-context.token = env.get('BOT_TOKEN')
+ctx.token = env.get('BOT_TOKEN')
 
 logging.basicConfig(
     level=env.get_int('LOG_LEVEL', 30),

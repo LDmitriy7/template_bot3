@@ -3,9 +3,9 @@ from __future__ import annotations
 import hashlib
 from dataclasses import dataclass
 
-from . import api_types
-from . import constants as c
-from . import models
+from . import documents as doc
+from . import tg_objects
+from .. import constants as c
 
 __all__ = [
     'MyType',
@@ -41,27 +41,27 @@ class CallbackButton:
     def save(self) -> str:
         string = f'{self.text}|{self.button_id}|{self._vars}'
         doc_id = hashlib.md5(string.encode()).hexdigest()
-        models.CallbackButton(_id=doc_id, text=self.text, button_id=self.button_id, vars=self._vars).save()
+        doc.CallbackButton(_id=doc_id, text=self.text, button_id=self.button_id, vars=self._vars).save()
         return doc_id
 
     @classmethod
     def get_button(cls, doc_id: str) -> CallbackButton | None:
-        doc = models.CallbackButton.get_doc(_id=doc_id)
+        d = doc.CallbackButton.get_doc(_id=doc_id)
 
-        if not doc:
+        if not d:
             return None
 
-        button = CallbackButton(doc.text, doc.button_id)
-        button._vars = doc.vars
+        button = CallbackButton(d.text, d.button_id)
+        button._vars = d.vars
         return button
 
-    def __call__(self, **_vars: str | int | list | dict | set) -> api_types.InlineKeyboardButton:
+    def __call__(self, **_vars: str | int | list | dict | set) -> tg_objects.InlineKeyboardButton:
         """Return InlineKeyboardButton(text=text.format(**args), callback_data=button_doc_id)"""
         new_button = CallbackButton(self.text, self.button_id)
         new_button._vars = _vars
         doc_id = new_button.save()
 
-        return api_types.InlineKeyboardButton(
+        return tg_objects.InlineKeyboardButton(
             text=new_button.text.format(**_vars),
             callback_data=doc_id,
         )
@@ -86,8 +86,8 @@ class UrlButton:
         self.text = text
         self.url = url
 
-    def __call__(self) -> api_types.InlineKeyboardButton:
-        return api_types.InlineKeyboardButton(self.text, url=self.url)
+    def __call__(self) -> tg_objects.InlineKeyboardButton:
+        return tg_objects.InlineKeyboardButton(self.text, url=self.url)
 
 
 class State:

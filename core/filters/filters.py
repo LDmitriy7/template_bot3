@@ -1,9 +1,8 @@
-from contextlib import suppress
 from dataclasses import dataclass
 
-from . import utils
-from .api_types import Update
-from .my_types import CallbackButton
+from .. import utils
+from ..models.tg_objects import Update
+from ..models.new_objects import CallbackButton
 
 
 @dataclass
@@ -59,9 +58,9 @@ class UserId(Filter):
     value: int | list[int]
 
     def check(self, _):
-        from .loader import context
+        from ..context import ctx
 
-        return context.user_id in utils.listify(self.value)
+        return ctx.user_id in utils.listify(self.value)
 
 
 @dataclass
@@ -69,13 +68,13 @@ class ChatType(Filter):
     value: str | list[str]
 
     def check(self, _):
-        from loader import context
+        from ..context import ctx
 
-        return context.chat_type in utils.listify(self.value)
+        return ctx.chat_type in utils.listify(self.value)
 
 
 @dataclass
-class Data(Filter):
+class QueryData(Filter):
     value: str | None
 
     def check(self, update: Update):
@@ -92,9 +91,9 @@ class State(Filter):
     value: str | None
 
     def check(self, _):
-        from .loader import context
+        from ..context import ctx
 
-        return self.value == '*' or context.state == self.value
+        return self.value == '*' or ctx.state == self.value
 
 
 @dataclass
@@ -102,13 +101,13 @@ class Button(Filter):
     value: CallbackButton | list[str]
 
     def check(self, _):
-        from .loader import context
+        from ..context import ctx
 
         if isinstance(self.value, list):
-            return context.text in self.value
+            return ctx.text in self.value
 
         try:
-            doc_id = context.data
+            doc_id = ctx.query_data
             button = CallbackButton.get_button(doc_id)
             return button.text == self.value.text and button.button_id == self.value.button_id
         except (KeyError, AttributeError):

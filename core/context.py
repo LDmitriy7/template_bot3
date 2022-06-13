@@ -1,12 +1,41 @@
 from contextvars import ContextVar
 from dataclasses import dataclass
 
-from . import constants as c
-from . import models
-from .api_types import *
-from .my_types import *
+from .models import doc
+from .models.tg_objects import *
+from .models.new_objects import *
+
+__all__ = ['ctx']
 
 UPDATE = ContextVar('UPDATE')
+
+
+class ContextDict:
+
+    def __setitem__(self, key: str, value):
+        storage = ctx.storage
+        storage.data[key] = value
+        storage.save()
+
+    def __getitem__(self, item: str):
+        storage = ctx.storage
+        return storage.data[item]
+
+    def __contains__(self, key: str):
+        storage = ctx.storage
+        return key in storage.data
+
+    def get(self, item: str, default=None):
+        try:
+            return self[item]
+        except KeyError:
+            return default
+
+    @staticmethod
+    def clear():
+        storage = ctx.storage
+        storage.data.clear()
+        storage.save()
 
 
 @dataclass
@@ -16,55 +45,33 @@ class Context:
     disable_web_page_preview: bool = None
     disable_notification: bool = None
     protect_content: bool = None
+    data = ContextDict()
 
-    def __setitem__(self, key: str, value):
-        # TODO: what if chat_id or user_id is None
-        storage = models.Storage.get(self.chat_id, self.user_id)
-        storage.data[key] = value
-        storage.save()
-
-    def __getitem__(self, item: str):
-        storage = models.Storage.get(self.chat_id, self.user_id)
-        return storage.data[item]
-
-    def __contains__(self, key: str):
-        storage = models.Storage.get(self.chat_id, self.user_id)
-        return key in storage.data
-
-    def get(self, item: str, default=None):
-        try:
-            return self[item]
-        except KeyError:
-            return default
-
-    def clear(self):
-        storage = models.Storage.get(self.chat_id, self.user_id)
-        storage.data.clear()
-        storage.save()
+    @property
+    def storage(self):
+        return doc.Storage.get(ctx.chat_id, ctx.user_id)
 
     @property
     def state(self) -> str | None:
         """User.state"""
-        storage = models.Storage.get(self.chat_id, self.user_id)
-        return storage.state
+        return self.storage.state
 
     @state.setter
     def state(self, value: str):
         """User.state"""
-        storage = models.Storage.get(self.chat_id, self.user_id)
+        storage = self.storage
         storage.state = value
         storage.save()
 
     @property
     def lang(self) -> str | None:
         """User.lang"""
-        storage = models.Storage.get(self.chat_id, self.user_id)
-        return storage.lang
+        return self.storage.lang
 
     @lang.setter
     def lang(self, value: str):
         """User.lang"""
-        storage = models.Storage.get(self.chat_id, self.user_id)
+        storage = self.storage
         storage.lang = value
         storage.save()
 
@@ -72,7 +79,7 @@ class Context:
     def button(self) -> CallbackButton | None:
         """CallbackQuery.button"""
         try:
-            button_id = self.data
+            button_id = self.query_data
             return CallbackButton.get_button(button_id)
         except (KeyError, AttributeError):
             return None
@@ -172,7 +179,7 @@ class Context:
         return value
 
     @property
-    def data(self) -> str | None:
+    def query_data(self) -> str | None:
         """CallbackQuery.data"""
 
         value = None
@@ -204,3 +211,6 @@ class Context:
             value = user.id
 
         return value
+
+
+ctx = Context()

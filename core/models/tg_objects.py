@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field, asdict, Field
+from dataclasses import dataclass, field
 
-from . import utils
+from .base import Model
 
 __all__ = [
-    'ApiType',
+    'TgObject',
     'Update',
     'WebhookInfo',
     'User',
@@ -141,59 +141,15 @@ __all__ = [
     'GameHighScore',
 ]
 
-DATACLASS_FIELDS = '__dataclass_fields__'
 
-
-@dataclass
-class ApiType:
+class TgObject(Model):
     __aliases__ = {'from_user': 'from'}
 
-    @classmethod
-    def eval_fields_types(cls):
-        fields: dict = getattr(cls, DATACLASS_FIELDS)
 
-        for f in fields.values():
-            f.type = eval(f.type)
-
-    @staticmethod
-    def get_field_types(f: Field):
-        return utils.listify(getattr(f.type, '__args__', f.type))
-
-    def __post_init__(self):
-        fields: dict = getattr(self, DATACLASS_FIELDS)
-
-        for f_name, f in fields.items():
-            value = getattr(self, f_name)
-
-            if isinstance(value, dict):
-                for t in self.get_field_types(f):
-                    if issubclass(t, ApiType):
-                        setattr(self, f_name, t.from_dict(value))
-                        break
-
-    @classmethod
-    def from_dict(cls, d: dict):
-
-        fields: dict = getattr(cls, DATACLASS_FIELDS)
-        new_d = {}
-
-        for f in fields:
-            if f in d:
-                new_d[f] = d[f]
-            elif f in cls.__aliases__:
-                new_d[f] = d[cls.__aliases__[f]]
-
-        # noinspection PyArgumentList
-        return cls(**new_d)
-
-    def to_dict(self):
-        return asdict(self, dict_factory=lambda x: {k: v for (k, v) in x if v is not None})
-
-
-# === Getting updates
+# ==> Getting updates
 
 @dataclass
-class Update(ApiType):
+class Update(TgObject):
     update_id: int
     message: Message = None
     edited_message: Message = None
@@ -212,7 +168,7 @@ class Update(ApiType):
 
 
 @dataclass
-class WebhookInfo(ApiType):
+class WebhookInfo(TgObject):
     url: str
     has_custom_certificate: bool
     pending_update_count: int
@@ -224,9 +180,10 @@ class WebhookInfo(ApiType):
     allowed_updates: list[str] = None
 
 
-# === Available types
+# ==> Available types
+
 @dataclass
-class User(ApiType):
+class User(TgObject):
     id: int
     is_bot: bool
     first_name: str
@@ -239,7 +196,7 @@ class User(ApiType):
 
 
 @dataclass
-class Chat(ApiType):
+class Chat(TgObject):
     id: int
     type: str
     title: str = None
@@ -263,7 +220,7 @@ class Chat(ApiType):
 
 
 @dataclass
-class Message(ApiType):
+class Message(TgObject):
     message_id: int
     date: int
     chat: Chat
@@ -326,12 +283,12 @@ class Message(ApiType):
 
 
 @dataclass
-class MessageId(ApiType):
+class MessageId(TgObject):
     message_id: int
 
 
 @dataclass
-class MessageEntity(ApiType):
+class MessageEntity(TgObject):
     type: str
     offset: int
     length: int
@@ -341,7 +298,7 @@ class MessageEntity(ApiType):
 
 
 @dataclass
-class PhotoSize(ApiType):
+class PhotoSize(TgObject):
     file_id: str
     file_unique_id: str
     width: int
@@ -350,7 +307,7 @@ class PhotoSize(ApiType):
 
 
 @dataclass
-class Animation(ApiType):
+class Animation(TgObject):
     file_id: str
     file_unique_id: str
     width: int
@@ -363,7 +320,7 @@ class Animation(ApiType):
 
 
 @dataclass
-class Audio(ApiType):
+class Audio(TgObject):
     file_id: str
     file_unique_id: str
     duration: int
@@ -376,7 +333,7 @@ class Audio(ApiType):
 
 
 @dataclass
-class Document(ApiType):
+class Document(TgObject):
     file_id: str
     file_unique_id: str
     thumb: PhotoSize = None
@@ -386,7 +343,7 @@ class Document(ApiType):
 
 
 @dataclass
-class Video(ApiType):
+class Video(TgObject):
     file_id: str
     file_unique_id: str
     width: int
@@ -399,7 +356,7 @@ class Video(ApiType):
 
 
 @dataclass
-class VideoNote(ApiType):
+class VideoNote(TgObject):
     file_id: str
     file_unique_id: str
     length: int
@@ -409,7 +366,7 @@ class VideoNote(ApiType):
 
 
 @dataclass
-class Voice(ApiType):
+class Voice(TgObject):
     file_id: str
     file_unique_id: str
     duration: int
@@ -418,7 +375,7 @@ class Voice(ApiType):
 
 
 @dataclass
-class Contact(ApiType):
+class Contact(TgObject):
     phone_number: str
     first_name: str
     last_name: str = None
@@ -427,26 +384,26 @@ class Contact(ApiType):
 
 
 @dataclass
-class Dice(ApiType):
+class Dice(TgObject):
     emoji: str
     value: int
 
 
 @dataclass
-class PollOption(ApiType):
+class PollOption(TgObject):
     text: str
     voter_count: int
 
 
 @dataclass
-class PollAnswer(ApiType):
+class PollAnswer(TgObject):
     poll_id: str
     user: User
     option_ids: list[int]
 
 
 @dataclass
-class Poll(ApiType):
+class Poll(TgObject):
     id: str
     question: str
     options: list[PollOption]
@@ -463,7 +420,7 @@ class Poll(ApiType):
 
 
 @dataclass
-class Location(ApiType):
+class Location(TgObject):
     longitude: float
     latitude: float
     horizontal_accuracy: float = None
@@ -473,7 +430,7 @@ class Location(ApiType):
 
 
 @dataclass
-class Venue(ApiType):
+class Venue(TgObject):
     location: Location
     title: str
     address: str
@@ -484,51 +441,51 @@ class Venue(ApiType):
 
 
 @dataclass
-class WebAppData(ApiType):
+class WebAppData(TgObject):
     data: str
     button_text: str
 
 
 @dataclass
-class ProximityAlertTriggered(ApiType):
+class ProximityAlertTriggered(TgObject):
     traveler: User
     watcher: User
     distance: int
 
 
 @dataclass
-class MessageAutoDeleteTimerChanged(ApiType):
+class MessageAutoDeleteTimerChanged(TgObject):
     message_auto_delete_time: int
 
 
 @dataclass
-class VideoChatScheduled(ApiType):
+class VideoChatScheduled(TgObject):
     start_date: int
 
 
 @dataclass
-class VideoChatStarted(ApiType):
+class VideoChatStarted(TgObject):
     pass
 
 
 @dataclass
-class VideoChatEnded(ApiType):
+class VideoChatEnded(TgObject):
     duration: int
 
 
 @dataclass
-class VideoChatParticipantsInvited(ApiType):
+class VideoChatParticipantsInvited(TgObject):
     users: list[User]
 
 
 @dataclass
-class UserProfilePhotos(ApiType):
+class UserProfilePhotos(TgObject):
     total_count: int
     photos: list[list[PhotoSize]]
 
 
 @dataclass
-class File(ApiType):
+class File(TgObject):
     file_id: str
     file_unique_id: str
     file_size: int = None
@@ -536,12 +493,12 @@ class File(ApiType):
 
 
 @dataclass
-class WebAppInfo(ApiType):
+class WebAppInfo(TgObject):
     url: str
 
 
 @dataclass
-class ReplyKeyboardMarkup(ApiType):
+class ReplyKeyboardMarkup(TgObject):
     keyboard: list[list[KeyboardButton]] = field(default_factory=list)
     resize_keyboard: bool = None
     one_time_keyboard: bool = None
@@ -554,7 +511,7 @@ class ReplyKeyboardMarkup(ApiType):
 
 
 @dataclass
-class KeyboardButton(ApiType):
+class KeyboardButton(TgObject):
     text: str
     request_contact: bool = None
     request_location: bool = None
@@ -563,18 +520,18 @@ class KeyboardButton(ApiType):
 
 
 @dataclass
-class KeyboardButtonPollType(ApiType):
+class KeyboardButtonPollType(TgObject):
     type: str = None
 
 
 @dataclass
-class ReplyKeyboardRemove(ApiType):
+class ReplyKeyboardRemove(TgObject):
     remove_keyboard: bool
     selective: bool = None
 
 
 @dataclass
-class InlineKeyboardMarkup(ApiType):
+class InlineKeyboardMarkup(TgObject):
     inline_keyboard: list[list[InlineKeyboardButton]] = field(default_factory=list)
 
     def add_row(self, *buttons: InlineKeyboardButton):
@@ -582,7 +539,7 @@ class InlineKeyboardMarkup(ApiType):
 
 
 @dataclass
-class InlineKeyboardButton(ApiType):
+class InlineKeyboardButton(TgObject):
     text: str
     url: str = None
     callback_data: str = None
@@ -595,7 +552,7 @@ class InlineKeyboardButton(ApiType):
 
 
 @dataclass
-class LoginUrl(ApiType):
+class LoginUrl(TgObject):
     url: str
     forward_text: str = None
     bot_username: str = None
@@ -603,7 +560,7 @@ class LoginUrl(ApiType):
 
 
 @dataclass
-class CallbackQuery(ApiType):
+class CallbackQuery(TgObject):
     id: str
     from_user: User
     chat_instance: str
@@ -614,14 +571,14 @@ class CallbackQuery(ApiType):
 
 
 @dataclass
-class ForceReply(ApiType):
+class ForceReply(TgObject):
     force_reply: bool
     input_field_placeholder: str = None
     selective: bool = None
 
 
 @dataclass
-class ChatPhoto(ApiType):
+class ChatPhoto(TgObject):
     small_file_id: str
     small_file_unique_id: str
     big_file_id: str
@@ -629,7 +586,7 @@ class ChatPhoto(ApiType):
 
 
 @dataclass
-class ChatInviteLink(ApiType):
+class ChatInviteLink(TgObject):
     invite_link: str
     creator: User
     creates_join_request: bool
@@ -642,7 +599,7 @@ class ChatInviteLink(ApiType):
 
 
 @dataclass
-class ChatAdministratorRights(ApiType):
+class ChatAdministratorRights(TgObject):
     is_anonymous: bool
     can_manage_chat: bool
     can_delete_messages: bool
@@ -656,8 +613,8 @@ class ChatAdministratorRights(ApiType):
     can_pin_messages: bool = None
 
 
-# @dataclass
-class ChatMember(ApiType):
+# abstract
+class ChatMember(TgObject):
     status: str
     user: User
 
@@ -725,7 +682,7 @@ class ChatMemberBanned(ChatMember):
 
 
 @dataclass
-class ChatMemberUpdated(ApiType):
+class ChatMemberUpdated(TgObject):
     chat: Chat
     from_user: User
     date: int
@@ -735,7 +692,7 @@ class ChatMemberUpdated(ApiType):
 
 
 @dataclass
-class ChatJoinRequest(ApiType):
+class ChatJoinRequest(TgObject):
     chat: Chat
     from_user: User
     date: int
@@ -744,7 +701,7 @@ class ChatJoinRequest(ApiType):
 
 
 @dataclass
-class ChatPermissions(ApiType):
+class ChatPermissions(TgObject):
     can_send_messages: bool = None
     can_send_media_messages: bool = None
     can_send_polls: bool = None
@@ -756,19 +713,19 @@ class ChatPermissions(ApiType):
 
 
 @dataclass
-class ChatLocation(ApiType):
+class ChatLocation(TgObject):
     location: Location
     address: str
 
 
 @dataclass
-class BotCommand(ApiType):
+class BotCommand(TgObject):
     command: str
     description: str
 
 
-# @dataclass
-class BotCommandScope(ApiType):
+# abstract
+class BotCommandScope(TgObject):
     type: str
 
 
@@ -812,7 +769,7 @@ class BotCommandScopeChatMember(BotCommandScope):
 
 
 @dataclass
-class MenuButton(ApiType):
+class MenuButton(TgObject):
     pass
 
 
@@ -834,13 +791,13 @@ class MenuButtonDefault(MenuButton):
 
 
 @dataclass
-class ResponseParameters(ApiType):
+class ResponseParameters(TgObject):
     migrate_to_chat_id: int = None
     retry_after: int = None
 
 
 @dataclass
-class InputMedia(ApiType):
+class InputMedia(TgObject):
     pass
 
 
@@ -857,7 +814,7 @@ class InputMediaPhoto(InputMedia):
 class InputMediaVideo(InputMedia):
     type: str
     media: str
-    thumb: InputFile or str = None
+    thumb: InputFile | str = None
     caption: str = None
     parse_mode: str = None
     caption_entities: list[MessageEntity] = None
@@ -871,7 +828,7 @@ class InputMediaVideo(InputMedia):
 class InputMediaAnimation(InputMedia):
     type: str
     media: str
-    thumb: InputFile or str = None
+    thumb: InputFile | str = None
     caption: str = None
     parse_mode: str = None
     caption_entities: list[MessageEntity] = None
@@ -884,7 +841,7 @@ class InputMediaAnimation(InputMedia):
 class InputMediaAudio(InputMedia):
     type: str
     media: str
-    thumb: InputFile or str = None
+    thumb: InputFile | str = None
     caption: str = None
     parse_mode: str = None
     caption_entities: list[MessageEntity] = None
@@ -897,7 +854,7 @@ class InputMediaAudio(InputMedia):
 class InputMediaDocument(InputMedia):
     type: str
     media: str
-    thumb: InputFile or str = None
+    thumb: InputFile | str = None
     caption: str = None
     parse_mode: str = None
     caption_entities: list[MessageEntity] = None
@@ -905,14 +862,14 @@ class InputMediaDocument(InputMedia):
 
 
 @dataclass
-class InputFile(ApiType):
-    pass
+class InputFile(TgObject):  # TODO
+    ...
 
 
-# === Stickers
+# ==> Stickers
 
 @dataclass
-class Sticker(ApiType):
+class Sticker(TgObject):
     file_id: str
     file_unique_id: str
     width: int
@@ -927,7 +884,7 @@ class Sticker(ApiType):
 
 
 @dataclass
-class StickerSet(ApiType):
+class StickerSet(TgObject):
     name: str
     title: str
     is_animated: bool
@@ -938,16 +895,17 @@ class StickerSet(ApiType):
 
 
 @dataclass
-class MaskPosition(ApiType):
+class MaskPosition(TgObject):
     point: str
     x_shift: float
     y_shift: float
     scale: float
 
 
-# === Inline mode
+# ==> Inline mode
+
 @dataclass
-class InlineQuery(ApiType):
+class InlineQuery(TgObject):
     id: str
     from_user: User
     query: str
@@ -957,7 +915,7 @@ class InlineQuery(ApiType):
 
 
 @dataclass
-class InlineQueryResult(ApiType):
+class InlineQueryResult(TgObject):
     pass
 
 
@@ -1258,7 +1216,7 @@ class InlineQueryResultCachedAudio(InlineQueryResult):
 
 
 @dataclass
-class InputMessageContent(ApiType):
+class InputMessageContent(TgObject):
     pass
 
 
@@ -1325,7 +1283,7 @@ class InputInvoiceMessageContent(InputMessageContent):
 
 
 @dataclass
-class ChosenInlineResult(ApiType):
+class ChosenInlineResult(TgObject):
     result_id: str
     from_user: User
     query: str
@@ -1334,20 +1292,20 @@ class ChosenInlineResult(ApiType):
 
 
 @dataclass
-class SentWebAppMessage(ApiType):
+class SentWebAppMessage(TgObject):
     inline_message_id: str = None
 
 
-# === Payments
+# ==> Payments
 
 @dataclass
-class LabeledPrice(ApiType):
+class LabeledPrice(TgObject):
     label: str
     amount: int
 
 
 @dataclass
-class Invoice(ApiType):
+class Invoice(TgObject):
     title: str
     description: str
     start_parameter: str
@@ -1356,7 +1314,7 @@ class Invoice(ApiType):
 
 
 @dataclass
-class ShippingAddress(ApiType):
+class ShippingAddress(TgObject):
     country_code: str
     state: str
     city: str
@@ -1366,7 +1324,7 @@ class ShippingAddress(ApiType):
 
 
 @dataclass
-class OrderInfo(ApiType):
+class OrderInfo(TgObject):
     name: str = None
     phone_number: str = None
     email: str = None
@@ -1374,14 +1332,14 @@ class OrderInfo(ApiType):
 
 
 @dataclass
-class ShippingOption(ApiType):
+class ShippingOption(TgObject):
     id: str
     title: str
     prices: list[LabeledPrice]
 
 
 @dataclass
-class SuccessfulPayment(ApiType):
+class SuccessfulPayment(TgObject):
     currency: str
     total_amount: int
     invoice_payload: str
@@ -1392,7 +1350,7 @@ class SuccessfulPayment(ApiType):
 
 
 @dataclass
-class ShippingQuery(ApiType):
+class ShippingQuery(TgObject):
     id: str
     from_user: User
     invoice_payload: str
@@ -1400,7 +1358,7 @@ class ShippingQuery(ApiType):
 
 
 @dataclass
-class PreCheckoutQuery(ApiType):
+class PreCheckoutQuery(TgObject):
     id: str
     from_user: User
     currency: str
@@ -1410,15 +1368,16 @@ class PreCheckoutQuery(ApiType):
     order_info: OrderInfo = None
 
 
-# === Telegram Passport
+# ==> Telegram Passport
+
 @dataclass
-class PassportData(ApiType):
+class PassportData(TgObject):
     data: list[EncryptedPassportElement]
     credentials: EncryptedCredentials
 
 
 @dataclass
-class PassportFile(ApiType):
+class PassportFile(TgObject):
     file_id: str
     file_unique_id: str
     file_size: int
@@ -1426,7 +1385,7 @@ class PassportFile(ApiType):
 
 
 @dataclass
-class EncryptedPassportElement(ApiType):
+class EncryptedPassportElement(TgObject):
     type: str
     hash: str
     data: str = None
@@ -1440,14 +1399,14 @@ class EncryptedPassportElement(ApiType):
 
 
 @dataclass
-class EncryptedCredentials(ApiType):
+class EncryptedCredentials(TgObject):
     data: str
     hash: str
     secret: str
 
 
 @dataclass
-class PassportElementError(ApiType):
+class PassportElementError(TgObject):
     pass
 
 
@@ -1524,9 +1483,10 @@ class PassportElementErrorUnspecified(PassportElementError):
     message: str
 
 
-# === Games
+# ==> Games
+
 @dataclass
-class Game(ApiType):
+class Game(TgObject):
     title: str
     description: str
     photo: list[PhotoSize]
@@ -1536,7 +1496,7 @@ class Game(ApiType):
 
 
 @dataclass
-class CallbackGame(ApiType):
+class CallbackGame(TgObject):
     user_id: int
     score: int
     force: bool = None
@@ -1547,7 +1507,7 @@ class CallbackGame(ApiType):
 
 
 @dataclass
-class GameHighScore(ApiType):
+class GameHighScore(TgObject):
     position: int
     user: User
     score: int
@@ -1555,5 +1515,5 @@ class GameHighScore(ApiType):
 
 # fix errors
 for i in __all__:
-    _type: ApiType = locals()[i]
-    _type.eval_fields_types()
+    cls: type[TgObject] = globals()[i]
+    cls.eval_fields_types(globals())

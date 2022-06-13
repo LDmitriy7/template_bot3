@@ -1,28 +1,10 @@
 from __future__ import annotations
 
-import json
-import typing
-
 import mongoengine as me
 
-T = typing.TypeVar('T')
+from .base import Document
 
-
-class Document(me.Document):
-    meta = {
-        'abstract': True,
-    }
-
-    @classmethod
-    def get_doc(cls: type[T], *args, **kwargs) -> T | None:
-        return cls.objects(*args, **kwargs).first()
-
-    @classmethod
-    def get_docs(cls: type[T], *args, **kwargs) -> list[T]:
-        return [d for d in cls.objects(*args, **kwargs)]
-
-    def to_dict(self) -> dict:
-        return json.loads(self.to_json())
+__all__ = ['CallbackButton', 'Storage']
 
 
 class CallbackButton(Document):
@@ -44,8 +26,9 @@ class UserKey(me.EmbeddedDocument):
 class Storage(Document):
     key: UserKey = me.EmbeddedDocumentField(UserKey, primary_key=True)
     state: str = me.StringField()
-    data: dict = me.DictField()
     lang: str = me.StringField()
+    data: dict = me.DictField()
+    models: dict[str, dict] = me.DictField()
 
     @classmethod
     def get(cls, chat_id: int, user_id: int) -> Storage:

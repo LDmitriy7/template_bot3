@@ -5,9 +5,10 @@ name = "pypi"
 
 [packages]
 requests = "*"
-pydantic = "*"
+pydantic = {extras = ["dotenv"], version = "*"}
 python-dotenv = "*"
 mongoengine = "*"
+my = "*"
 
 [dev-packages]
 

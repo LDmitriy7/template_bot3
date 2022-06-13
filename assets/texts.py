@@ -2,15 +2,13 @@ from dataclasses import dataclass
 
 from core import Translations
 
-stub = 'Бот временно не работает...'
-
 
 @dataclass
 class T(Translations):
     ua: str
 
 
-# ===
+stub = T('Бот временно не работает...', ua='Бот тимчасово не працює...')
 
 main_menu = T('Главное меню:', ua='Головне меню:')
 no_my_ads = T('У вас еще нет объявлений', ua='У вас ще немає оголошень')

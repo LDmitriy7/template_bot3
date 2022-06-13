@@ -1,4 +1,4 @@
-from core import *
+from core import State
 
 
 class CreateAd:
@@ -7,6 +7,7 @@ class CreateAd:
     institution_type = State()
     institution_name = State()
     institution_address = State()
+    vacancies_num = State()
     vacancy_title = State()
     work_experience = State()
     salary = State()

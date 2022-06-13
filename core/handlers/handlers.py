@@ -1,6 +1,6 @@
-from . import filters
-from .loader import bot
-from .my_types import *
+from .. import filters
+from ..bot import bot
+from ..models.new_objects import *
 
 
 def on_text(
@@ -51,14 +51,14 @@ def on_command(
     return _
 
 
-def on_data(
+def on_callback_query(
         value: str = None,
         user_id: int | list[int] = None,
         chat_type: str | list[str] = None,
         state: str = None,
 ):
     fs = [
-        filters.Data(value),
+        filters.QueryData(value),
         filters.State(state),
     ]
 

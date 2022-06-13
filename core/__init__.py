@@ -1,17 +1,16 @@
 from . import constants
 from . import exceptions
-from .api_methods import *
-from .api_types import *
+from .bot import bot
+from .context import ctx
 from .handlers import *
-from .loader import bot, context, logger
-from .middlewares import *
-from .models import Document
-from .my_types import *
+from .loader import logger
+from .models.tg_methods import *
+from .models.tg_objects import *
+from .models.new_objects import *
 from .run import run
 from .utils import env
 
 # aliases
 exc = exceptions
 c = const = constants
-ctx = context
 log = logger

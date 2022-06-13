@@ -3,9 +3,10 @@ from importlib import import_module
 from pathlib import Path
 
 from . import exceptions
-from .api_methods import *
-from .api_types import Update
-from .loader import logger, context as ctx
+from core.models.tg_methods import *
+from core.models.tg_objects import Update
+from .loader import logger
+from .context import ctx
 
 
 def _check_handlers(update: Update):
