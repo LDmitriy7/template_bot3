@@ -2,13 +2,29 @@ from typing import Any
 
 from .new_objects import *
 from .tg_objects import *
-from ..bot import bot
-from ..context import ctx
+
+__all__ = [
+    'send_message',
+    'get_updates',
+    'get_chat_member',
+    'get_my_commands',
+    'set_my_commands',
+    'answer_callback_query',
+    'create_chat_invite_link',
+    'copy_message',
+    'edit_message_text',
+]
 
 SimpleTypes = int | float | bool | str | list | dict
 
 
+def _request(method: str, params: dict):
+    from .. import bot
+    return bot.request(method, params)
+
+
 def _get_translation(t: Translations):
+    from ..context import ctx
     return t.get(ctx.lang)
 
 
@@ -17,6 +33,8 @@ def _prepare_request_params(params: dict[str, Any], **alternatives) -> dict[str,
     new_params = {}
 
     for p, v in params.items():
+        if p in ['ctx']:
+            continue
         if v is None:
             v = alternatives.get(p)
         if isinstance(v, Translations):
@@ -40,6 +58,8 @@ def send_message(
         entities: list[MessageEntity] = None,
         allow_sending_without_reply: bool = None,
 ) -> Message:
+    from ..context import ctx
+
     params = _prepare_request_params(
         locals(),
         chat_id=ctx.chat_id,
@@ -49,7 +69,7 @@ def send_message(
         protect_content=ctx.protect_content,
     )
 
-    result: dict = bot.request('sendMessage', params)
+    result: dict = _request('sendMessage', params)
     return Message.from_dict(result)
 
 
@@ -63,7 +83,7 @@ def get_updates(
 ) -> list[Update]:
     params = _prepare_request_params(locals())
 
-    result = bot.request('GetUpdates', params)
+    result = _request('GetUpdates', params)
     return [Update.from_dict(i) for i in result]
 
 
@@ -71,13 +91,15 @@ def get_chat_member(
         chat_id: int | str = None,
         user_id: int = None,
 ) -> ChatMember:
+    from ..context import ctx
+
     params = _prepare_request_params(
         locals(),
         chat_id=ctx.chat_id,
         user_id=ctx.user_id,
     )
 
-    result: dict = bot.request('getChatMember', params)
+    result: dict = _request('getChatMember', params)
 
     _Model: type[ChatMember] = {
         'creator': ChatMemberOwner,
@@ -97,7 +119,7 @@ def get_my_commands(
 ) -> list[BotCommand]:
     params = _prepare_request_params(locals())
 
-    result: list = bot.request('getMyCommands', params)
+    result: list = _request('getMyCommands', params)
     return [BotCommand.from_dict(i) for (i) in result]
 
 
@@ -108,7 +130,7 @@ def set_my_commands(
 ) -> bool:
     params = _prepare_request_params(locals())
 
-    result: bool = bot.request('setMyCommands', params)
+    result: bool = _request('setMyCommands', params)
     return result
 
 
@@ -119,12 +141,14 @@ def answer_callback_query(
         url: str = None,
         cache_time: int = None,
 ) -> bool:
+    from ..context import ctx
+
     params = _prepare_request_params(
         locals(),
         callback_query_id=ctx.callback_query_id,
     )
 
-    result: bool = bot.request('AnswerCallbackQuery', params)
+    result: bool = _request('AnswerCallbackQuery', params)
     return result
 
 
@@ -135,12 +159,14 @@ def create_chat_invite_link(
         member_limit: int = None,
         creates_join_request: bool = None,
 ) -> ChatInviteLink:
+    from ..context import ctx
+
     params = _prepare_request_params(
         locals(),
         chat_id=ctx.chat_id,
     )
 
-    result: dict = bot.request('CreateChatInviteLink', params)
+    result: dict = _request('CreateChatInviteLink', params)
     return ChatInviteLink.from_dict(result)
 
 
@@ -157,6 +183,8 @@ def copy_message(
         allow_sending_without_reply: bool = None,
         reply_markup: InlineKeyboardMarkup | ReplyKeyboardMarkup | ReplyKeyboardRemove | ForceReply = None,
 ) -> MessageId:
+    from ..context import ctx
+
     params = _prepare_request_params(
         locals(),
         chat_id=ctx.chat_id,
@@ -167,7 +195,7 @@ def copy_message(
         protect_content=ctx.protect_content,
     )
 
-    result = bot.request('CopyMessage', params)
+    result = _request('CopyMessage', params)
     return MessageId.from_dict(result)
 
 
@@ -181,6 +209,8 @@ def edit_message_text(
         disable_web_page_preview: bool = None,
         reply_markup: InlineKeyboardMarkup = None,
 ):
+    from ..context import ctx
+
     params = _prepare_request_params(
         locals(),
         chat_id=ctx.chat_id,
@@ -189,7 +219,7 @@ def edit_message_text(
         message_id=ctx.message_id,
     )
 
-    result = bot.request('EditMessageText', params)
+    result = _request('EditMessageText', params)
     if result is True:
         return result
     return Message.from_dict(result)

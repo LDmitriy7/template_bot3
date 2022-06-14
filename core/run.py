@@ -5,6 +5,7 @@ from pathlib import Path
 from core.models.tg_methods import *
 from core.models.tg_objects import Update
 from . import exceptions
+from .bot import bot
 from .context import ctx
 from .loader import logger
 

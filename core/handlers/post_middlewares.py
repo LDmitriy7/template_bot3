@@ -1,10 +1,6 @@
 from core import filters
 from core.bot import bot
 
-__all__ = [
-    'after_callback_query',
-]
-
 
 def after_callback_query(
         value: str | None = None,

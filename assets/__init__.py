@@ -1,10 +1,29 @@
-from . import api, loader
+from . import api
 from . import commands
 from . import config
+from . import loader
 from . import texts
-from .models import keyboards as kb, documents as doc, states as st
+# from .models import documents
+from .models import keyboards
+from .models import models as model
+from .models import states
 
 # aliases
-txt = texts
-cfg = config
 cmd = commands
+cfg = config
+txt = texts
+kb = keyboards
+st = states
+# doc = documents
+
+__all__ = [
+    'api',
+    'loader',
+    'cmd', 'commands',
+    'cfg', 'config',
+    'txt', 'texts',
+    # 'documents',
+    'kb', 'keyboards',
+    'model',
+    'st', 'states',
+]

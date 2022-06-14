@@ -1,6 +1,9 @@
-import typing
+from __future__ import annotations
 
-from core import ctx
+import typing
+from dataclasses import dataclass
+
+from core import ctx, BaseModel
 
 T = typing.TypeVar('T', bound='MyModel')
 
@@ -13,26 +16,30 @@ class ModelProxy(typing.Generic[T]):
         return self._obj
 
     def __exit__(self, exc_type, exc_value, trace):
-        return True
+        self._obj.save()
 
 
-class MyModel:
-
-    @classmethod
-    def _from_dict(cls, d: dict):
-        # noinspection PyArgumentList
-        return cls(**d)
+class MyModel(BaseModel):
 
     @classmethod
-    def _from_context(cls):
-        obj: dict = ctx[cls.__name__]
-        return cls._from_dict(obj)
+    def get(cls) -> MyModel:
+        storage = ctx.storage
+        model = storage.models.get(cls.__name__)
+        if not model:
+            return cls()
+        return cls.from_dict(model)
+
+    def save(self):
+        storage = ctx.storage
+        storage.models[self.__class__.__name__] = self.to_dict()
+        storage.save()
 
     @classmethod
     def proxy(cls: type[T]) -> ModelProxy[T]:
-        return ModelProxy(cls._from_context())
+        return ModelProxy(cls.get())
 
 
+@dataclass
 class Vacancy(MyModel):
     title: str = None
     work_experience: str = None
@@ -41,22 +48,25 @@ class Vacancy(MyModel):
     working_hours: str = None
 
 
+@dataclass
 class Institution(MyModel):
     type: str = None
     name: str = None
     address: str = None
 
 
+@dataclass
 class Ad(MyModel):
-    regional_city: str
-    city: str
-    institution: Institution
-    vacancies: list[Vacancy]
-    extra_info: str
-    contact_phone: str
-    photo: str
+    regional_city: str = None
+    city: str = None
+    institution: Institution = None
+    vacancies: list[Vacancy] = None
+    extra_info: str = None
+    contact_phone: str = None
+    photo: str = None
 
 
+@dataclass
 class Order(MyModel):
     ad: Ad
     pin: bool

@@ -2,6 +2,14 @@ from .. import filters
 from ..bot import bot
 from ..models.new_objects import *
 
+__all__ = [
+    'on_text',
+    'on_command',
+    'on_callback_query',
+    'on_message',
+    'on_button',
+]
+
 
 def on_text(
         value: str = None,

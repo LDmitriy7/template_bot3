@@ -8,7 +8,7 @@ import mongoengine as me
 
 from .. import utils
 
-__all__ = ['Model', 'Document']
+__all__ = ['BaseModel', 'Document']
 
 T = typing.TypeVar('T')
 SimpleTypes = int | float | bool | str | list | dict
@@ -22,14 +22,14 @@ def is_list_type(t):
     return getattr(t, '__origin__', None) == list
 
 
-def prepare_dict(d: dict, cast_types: list) -> dict | Model:
+def prepare_dict(d: dict, cast_types: list) -> dict | BaseModel:
     for t in cast_types:
-        if issubclass(t, Model):
+        if issubclass(t, BaseModel):
             return t.from_dict(d)
     return d
 
 
-def prepare_list(li: list, cast_types: list) -> list[SimpleTypes] | list[Model]:
+def prepare_list(li: list, cast_types: list) -> list[SimpleTypes] | list[BaseModel]:
     new_list = []
 
     for item in li:
@@ -47,7 +47,7 @@ def prepare_list(li: list, cast_types: list) -> list[SimpleTypes] | list[Model]:
     return new_list
 
 
-def prepare_value(v: SimpleTypes, cast_types: list) -> SimpleTypes | Model | list[Model]:
+def prepare_value(v: SimpleTypes, cast_types: list) -> SimpleTypes | BaseModel | list[BaseModel]:
     if isinstance(v, list):
         return prepare_list(v, cast_types)
     elif isinstance(v, dict):
@@ -56,7 +56,7 @@ def prepare_value(v: SimpleTypes, cast_types: list) -> SimpleTypes | Model | lis
 
 
 @dataclass
-class Model:
+class BaseModel:
     __aliases__ = {}
 
     @classmethod

@@ -10,35 +10,45 @@ def _():
 
 @on_button(kb.Cities.buttons, state=st.CreateAd.city)
 def _():
-    ctx.data['city'] = ctx.text
+    with model.Ad.proxy() as ad:
+        ad.city = ctx.text
+
     ctx.state = st.CreateAd.institution_type
     send_message(txt.ask_institution_type)
 
 
 @on_text(state=st.CreateAd.institution_type)
 def _():
-    ctx.data['institution_type'] = ctx.text
+    with model.Institution.proxy() as inst:
+        inst.type = ctx.text
+
     ctx.state = st.CreateAd.institution_name
     send_message(txt.ask_institution_name)
 
 
 @on_text(state=st.CreateAd.institution_name)
 def _():
-    ctx.data['institution_name'] = ctx.text
+    with model.Institution.proxy() as inst:
+        inst.name = ctx.text
+
     ctx.state = st.CreateAd.institution_address
     send_message(txt.ask_institution_address)
 
 
 @on_text(state=st.CreateAd.institution_address)
 def _():
-    ctx.data['institution_address'] = ctx.text
+    with model.Institution.proxy() as inst:
+        inst.address = ctx.text
+
     ctx.state = st.CreateAd.vacancy_title
     send_message(txt.ask_vacancy_title)
 
 
 @on_text(state=st.CreateAd.vacancy_title)
 def _():
-    ctx.data['vacancy_title'] = ctx.text
+    with model.Vacancy.proxy() as vac:
+        vac.title = ctx.text
+
     ctx.state = st.CreateAd.work_experience
     send_message(txt.ask_work_experience)
 

@@ -1,11 +1,6 @@
 from core import filters
 from core.bot import bot
 
-__all__ = [
-    'before_message',
-    'before_command',
-]
-
 
 def before_message(
         user_id: int | list[int] = None,

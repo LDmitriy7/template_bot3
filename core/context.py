@@ -1,9 +1,9 @@
 from contextvars import ContextVar
 from dataclasses import dataclass
 
-from .models import doc
-from .models.tg_objects import *
+from .models.documents import Storage
 from .models.new_objects import *
+from .models.tg_objects import *
 
 __all__ = ['ctx']
 
@@ -49,7 +49,7 @@ class Context:
 
     @property
     def storage(self):
-        return doc.Storage.get(ctx.chat_id, ctx.user_id)
+        return Storage.get(ctx.chat_id, ctx.user_id)
 
     @property
     def state(self) -> str | None:

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from .base import Model
+from .base import BaseModel
 
 __all__ = [
     'TgObject',
@@ -142,7 +142,7 @@ __all__ = [
 ]
 
 
-class TgObject(Model):
+class TgObject(BaseModel):
     __aliases__ = {'from_user': 'from'}
 
 
