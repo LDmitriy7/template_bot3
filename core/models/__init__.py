@@ -1,16 +1,15 @@
+from . import base
 from . import documents
-from .base import *
 from .new_objects import *
 from .tg_methods import *
 from .tg_objects import *
 
 __all__ = [
-    # Base
-    'BaseModel',
-    'BaseDocument',
+    # Scopes
+    'documents',
+    'base',
 
     # Telegram objects
-    'TgObject',
     'Update',
     'WebhookInfo',
     'User',
@@ -21,7 +20,7 @@ __all__ = [
     'PhotoSize',
     'Animation',
     'Audio',
-    'BaseDocument',
+    'Document',
     'Video',
     'VideoNote',
     'Voice',
@@ -151,9 +150,8 @@ __all__ = [
     'UrlButton',
     'Translations',
     'State',
-
-    # Documents
-    'documents',
+    'InlineKeyboard',
+    'ReplyKeyboard',
 
     # Tg methods
     'send_message',
@@ -166,4 +164,6 @@ __all__ = [
     'copy_message',
     'edit_message_text',
     'delete_message',
+    'send_photo',
+    'send_document',
 ]

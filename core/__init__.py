@@ -5,6 +5,7 @@ from .context import ctx
 from .handlers import *
 from .loader import logger
 from .models import *
+from .models import send_photo
 from .run import run, process_update
 from .utils import env
 from . import filters
@@ -26,14 +27,10 @@ __all__ = [
     'exc', 'exceptions',
     'c', 'const', 'constants',
     'filters',
+    'base',
     # 'doc', 'documents',
 
-    # Base models
-    'BaseModel',
-    'BaseDocument',
-
     # Telegram objects
-    'TgObject',
     'Update',
     'WebhookInfo',
     'User',
@@ -44,7 +41,7 @@ __all__ = [
     'PhotoSize',
     'Animation',
     'Audio',
-    'BaseDocument',
+    'Document',
     'Video',
     'VideoNote',
     'Voice',
@@ -174,6 +171,8 @@ __all__ = [
     'UrlButton',
     'Translations',
     'State',
+    'InlineKeyboard',
+    'ReplyKeyboard',
 
     # Tg methods
     'send_message',
@@ -186,6 +185,8 @@ __all__ = [
     'copy_message',
     'edit_message_text',
     'delete_message',
+    'send_photo',
+    'send_document',
 
     # Handlers
     'on_text',

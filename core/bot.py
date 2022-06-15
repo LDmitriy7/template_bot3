@@ -1,3 +1,4 @@
+import json
 import logging
 from dataclasses import dataclass
 from typing import Callable, Any
@@ -7,6 +8,7 @@ import requests
 from . import constants as c
 from . import utils, exceptions
 from .filters import Filter
+from .models import InputFile
 
 __all__ = ['bot']
 
@@ -79,11 +81,24 @@ class Bot:
     def request(self, method: str, params: dict) -> dict | list | bool | str | int:
         from .context import ctx
 
-        params = utils.clear_params(params)
+        files = None
+        _params = {}
+
+        for k, v in params.items():
+            if isinstance(v, InputFile):
+                files = {k: open(v.path, 'rb')}
+            else:
+                _params[k] = v
+
+        params = utils.clear_params(_params)
         url = API_ENDPOINT.format(token=ctx.token, method=method)
 
         logging.debug(f'Request {method} with params: {params}')
-        resp = self.session.post(url, json=params)
+
+        if params.get('reply_markup'):
+            params['reply_markup'] = json.dumps(params['reply_markup'])
+
+        resp = self.session.post(url, data=params, files=files)
         result: dict = resp.json()
 
         if result[c.OK]:

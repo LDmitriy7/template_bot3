@@ -1,11 +1,9 @@
-# from __future__ import annotations
-
 import typing
 from dataclasses import dataclass
 
 import mongoengine as me
 
-from core import ctx, BaseModel, BaseDocument
+from core import ctx, base
 
 T = typing.TypeVar('T', bound='MyModel')
 
@@ -21,7 +19,7 @@ class ModelProxy(typing.Generic[T]):
         self._obj.save()
 
 
-class Collection(BaseDocument):
+class Collection(base.BaseDocument):
     user_id: int = me.IntField()
     model: str = me.StringField()
     obj: dict = me.DictField()
@@ -31,7 +29,7 @@ class Collection(BaseDocument):
     }
 
 
-class Model(BaseModel):
+class Model(base.BaseModel):
 
     @classmethod
     def get(cls) -> 'Model':

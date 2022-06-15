@@ -1,7 +1,9 @@
+""" All telegram methods from https://core.telegram.org/bots/api (v 6.0) """
+
 from typing import Any
 
 from .base import SimpleTypes
-from .new_objects import Translations
+from .new_objects import Translations, InlineKeyboard, ReplyKeyboard
 from .tg_objects import *
 
 __all__ = [
@@ -15,6 +17,8 @@ __all__ = [
     'copy_message',
     'edit_message_text',
     'delete_message',
+    'send_photo',
+    'send_document',
 ]
 
 
@@ -23,30 +27,38 @@ def _request(method: str, params: dict):
     return bot.request(method, params)
 
 
-def _get_translation(t: Translations):
+def _get_translation(translations: Translations):
     from ..context import ctx
-    return t.get(ctx.lang)
+    return translations.get(ctx.lang)
 
 
 # TODO
 def _prepare_request_params(params: dict[str, Any], **alternatives) -> dict[str, SimpleTypes]:
     new_params = {}
 
-    for p, v in params.items():
-        if p in ['ctx']:
+    for key, value in params.items():
+        if key in ['ctx']:
             continue
-        if v is None:
-            v = alternatives.get(p)
-        if isinstance(v, Translations):
-            v = _get_translation(v)
-        new_params[p] = v
+        if value is None:
+            value = alternatives.get(key)
+        if isinstance(value, Translations):
+            value = _get_translation(value)
+        elif isinstance(value, InlineKeyboard):
+            value = value()
+        elif isinstance(value, ReplyKeyboard):
+            value = value()
+        new_params[key] = value
 
     return new_params
 
 
+InlineKeyboardT = InlineKeyboardMarkup | InlineKeyboard
+ReplyMarkupT = ReplyKeyboard | ReplyKeyboardMarkup | InlineKeyboardT | ReplyKeyboardRemove | ForceReply
+
+
 def send_message(
         text: str | Translations,
-        reply_markup: ReplyKeyboardMarkup | InlineKeyboardMarkup | ReplyKeyboardRemove | ForceReply = None,
+        reply_markup: ReplyMarkupT = None,
 
         chat_id: int | str = None,
         parse_mode: str = None,
@@ -101,7 +113,7 @@ def get_chat_member(
 
     result: dict = _request('getChatMember', params)
 
-    _Model: type[ChatMember] = {
+    _model: type[ChatMember] = {
         'creator': ChatMemberOwner,
         'administrator': ChatMemberAdministrator,
         'member': ChatMemberMember,
@@ -110,7 +122,7 @@ def get_chat_member(
         'kicked': ChatMemberBanned,
     }[result['status']]
 
-    return _Model.from_dict(result)
+    return _model.from_dict(result)
 
 
 def get_my_commands(
@@ -120,7 +132,7 @@ def get_my_commands(
     params = _prepare_request_params(locals())
 
     result: list = _request('getMyCommands', params)
-    return [BotCommand.from_dict(i) for (i) in result]
+    return [BotCommand.from_dict(i) for i in result]
 
 
 def set_my_commands(
@@ -181,7 +193,7 @@ def copy_message(
         protect_content: bool = None,
         reply_to_message_id: int = None,
         allow_sending_without_reply: bool = None,
-        reply_markup: InlineKeyboardMarkup | ReplyKeyboardMarkup | ReplyKeyboardRemove | ForceReply = None,
+        reply_markup: ReplyMarkupT = None,
 ) -> MessageId:
     from ..context import ctx
 
@@ -207,7 +219,7 @@ def edit_message_text(
         parse_mode: str = None,
         entities: list[MessageEntity] = None,
         disable_web_page_preview: bool = None,
-        reply_markup: InlineKeyboardMarkup = None,
+        reply_markup: InlineKeyboardT = None,
 ):
     from ..context import ctx
 
@@ -239,3 +251,65 @@ def delete_message(
 
     result = _request('deleteMessage', params)
     return result
+
+
+def send_photo(
+        photo: str | InputFile,
+        caption: str = None,
+        reply_markup: ReplyMarkupT = None,
+
+        chat_id: int | str = None,
+        parse_mode: str = None,
+        disable_notification: bool = None,
+        protect_content: bool = None,
+
+        reply_to_message_id: int = None,
+        caption_entities: list[MessageEntity] = None,
+        allow_sending_without_reply: bool = None,
+) -> Message:
+    """ https://core.telegram.org/bots/api#sendphoto """
+
+    from ..context import ctx
+
+    params = _prepare_request_params(
+        locals(),
+        chat_id=ctx.chat_id,
+        parse_mode=ctx.parse_mode,
+        disable_notification=ctx.disable_notification,
+        protect_content=ctx.protect_content,
+    )
+
+    result: dict = _request('sendPhoto', params)
+    return Message.from_dict(result)
+
+
+def send_document(
+        document: str | InputFile,
+        thumb: str | InputFile = None,
+        caption: str = None,
+        reply_markup: ReplyMarkupT = None,
+
+        chat_id: int | str = None,
+        parse_mode: str = None,
+        disable_notification: bool = None,
+        protect_content: bool = None,
+
+        reply_to_message_id: int = None,
+        caption_entities: list[MessageEntity] = None,
+        allow_sending_without_reply: bool = None,
+        disable_content_type_detection: bool = None,
+) -> Message:
+    """ https://core.telegram.org/bots/api#senddocument """
+
+    from ..context import ctx
+
+    params = _prepare_request_params(
+        locals(),
+        chat_id=ctx.chat_id,
+        parse_mode=ctx.parse_mode,
+        disable_notification=ctx.disable_notification,
+        protect_content=ctx.protect_content,
+    )
+
+    result: dict = _request('sendDocument', params)
+    return Message.from_dict(result)

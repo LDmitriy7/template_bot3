@@ -5,7 +5,7 @@ T = TypeVar('T')
 
 
 def clear_params(params: dict) -> dict:
-    from core.models.tg_objects import TgObject
+    from core.models.base import TgObject
     from core.models.new_objects import NewObject
 
     def clear_obj(obj):

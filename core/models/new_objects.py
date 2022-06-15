@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import hashlib
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from . import documents as doc
 from . import tg_objects
@@ -89,6 +89,8 @@ class Translations:
 
     def get(self, lang: str = c.DEFAULT) -> str:
         """ Return translation to `lang` or `default` """
+        if not lang:
+            return self._get_default()
         return getattr(self, lang, self._get_default())
 
 
@@ -112,3 +114,27 @@ class State:
 
     def __set_name__(self, owner: type, name):
         self._value = f'{owner.__name__}.{name}'
+
+
+@dataclass
+class InlineKeyboard(NewObject):
+    keyboard: list[list[tg_objects.InlineKeyboardButton]] = field(default_factory=list)
+
+    def add_row(self, *buttons: tg_objects.InlineKeyboardButton):
+        self.keyboard.append(list(buttons))
+
+    def __call__(self) -> tg_objects.InlineKeyboardMarkup:
+        return tg_objects.InlineKeyboardMarkup(inline_keyboard=self.keyboard)
+
+
+@dataclass
+class ReplyKeyboard(NewObject):
+    keyboard: list[list[tg_objects.KeyboardButton]] = field(default_factory=list)
+    resize_keyboard: bool = True
+
+    def add_row(self, *buttons: str | tg_objects.KeyboardButton):
+        buttons = [tg_objects.KeyboardButton(b) if isinstance(b, str) else b for b in buttons]
+        self.keyboard.append(buttons)
+
+    def __call__(self) -> tg_objects.ReplyKeyboardMarkup:
+        return tg_objects.ReplyKeyboardMarkup(keyboard=self.keyboard, resize_keyboard=self.resize_keyboard)

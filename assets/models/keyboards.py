@@ -4,7 +4,7 @@ from core import *
 from .. import config as cfg
 
 
-class MainMenu(InlineKeyboardMarkup):
+class MainMenu(InlineKeyboard):
     create_ad = CallbackButton('📝 Создать объявление')
     my_ads = CallbackButton('📁 Мои объявления')
     tech_support = UrlButton('👨‍💻 Техподдержка', 'https://t.me/LFeedbackBot')
@@ -21,7 +21,7 @@ class MainMenu(InlineKeyboardMarkup):
         self.add_row(self.change_lang(flag=flag))
 
 
-class RegionalCities(ReplyKeyboardMarkup):
+class RegionalCities(ReplyKeyboard):
     buttons = list(cfg.CITIES.keys())
 
     def __init__(self):
@@ -30,7 +30,7 @@ class RegionalCities(ReplyKeyboardMarkup):
         self.add_row(*self.buttons)
 
 
-class Cities(ReplyKeyboardMarkup):
+class Cities(ReplyKeyboard):
     buttons = list(chain(*cfg.CITIES.values()))
 
     def __init__(self, regional_city: str):

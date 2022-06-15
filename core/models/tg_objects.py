@@ -1,13 +1,12 @@
-""" https://core.telegram.org/bots/api#available-types (v 6.0) """
+""" All telegram objects from https://core.telegram.org/bots/api (v 6.0) """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 
-from .base import BaseModel
+from .base import TgObject
 
 __all__ = [
-    'TgObject',
     'Update',
     'WebhookInfo',
     'User',
@@ -144,13 +143,7 @@ __all__ = [
 ]
 
 
-class TgObject(BaseModel):
-    """ Base class for all telegram objects """
-
-    __aliases__ = {'from_user': 'from'}
-
-
-# ==> Getting updates
+# ==> Section: https://core.telegram.org/bots/api#getting-updates
 
 @dataclass
 class Update(TgObject):
@@ -188,7 +181,7 @@ class WebhookInfo(TgObject):
     allowed_updates: list[str] = None
 
 
-# ==> Available types
+# ==> Section: https://core.telegram.org/bots/api#available-types
 
 @dataclass
 class User(TgObject):
@@ -444,6 +437,8 @@ class PollAnswer(TgObject):
 
 @dataclass
 class Poll(TgObject):
+    """ https://core.telegram.org/bots/api#poll """
+
     id: str
     question: str
     options: list[PollOption]
@@ -461,6 +456,8 @@ class Poll(TgObject):
 
 @dataclass
 class Location(TgObject):
+    """ https://core.telegram.org/bots/api#location """
+
     longitude: float
     latitude: float
     horizontal_accuracy: float = None
@@ -471,6 +468,8 @@ class Location(TgObject):
 
 @dataclass
 class Venue(TgObject):
+    """ https://core.telegram.org/bots/api#venue """
+
     location: Location
     title: str
     address: str
@@ -482,12 +481,16 @@ class Venue(TgObject):
 
 @dataclass
 class WebAppData(TgObject):
+    """ https://core.telegram.org/bots/api#webappdata """
+
     data: str
     button_text: str
 
 
 @dataclass
 class ProximityAlertTriggered(TgObject):
+    """ https://core.telegram.org/bots/api#proximityalerttriggered """
+
     traveler: User
     watcher: User
     distance: int
@@ -495,37 +498,49 @@ class ProximityAlertTriggered(TgObject):
 
 @dataclass
 class MessageAutoDeleteTimerChanged(TgObject):
+    """ https://core.telegram.org/bots/api#messageautodeletetimerchanged """
+
     message_auto_delete_time: int
 
 
 @dataclass
 class VideoChatScheduled(TgObject):
+    """ https://core.telegram.org/bots/api#videochatscheduled """
+
     start_date: int
 
 
 @dataclass
 class VideoChatStarted(TgObject):
-    pass
+    """ https://core.telegram.org/bots/api#videochatstarted """
 
 
 @dataclass
 class VideoChatEnded(TgObject):
+    """ https://core.telegram.org/bots/api#videochatended """
+
     duration: int
 
 
 @dataclass
 class VideoChatParticipantsInvited(TgObject):
+    """ https://core.telegram.org/bots/api#videochatparticipantsinvited """
+
     users: list[User]
 
 
 @dataclass
 class UserProfilePhotos(TgObject):
+    """ https://core.telegram.org/bots/api#userprofilephotos """
+
     total_count: int
     photos: list[list[PhotoSize]]
 
 
 @dataclass
 class File(TgObject):
+    """ https://core.telegram.org/bots/api#file """
+
     file_id: str
     file_unique_id: str
     file_size: int = None
@@ -534,24 +549,26 @@ class File(TgObject):
 
 @dataclass
 class WebAppInfo(TgObject):
+    """ https://core.telegram.org/bots/api#webappinfo """
+
     url: str
 
 
 @dataclass
 class ReplyKeyboardMarkup(TgObject):
-    keyboard: list[list[KeyboardButton]] = field(default_factory=list)
+    """ https://core.telegram.org/bots/api#replykeyboardmarkup """
+
+    keyboard: list[list[KeyboardButton]]
     resize_keyboard: bool = None
     one_time_keyboard: bool = None
     input_field_placeholder: str = None
     selective: bool = None
 
-    def add_row(self, *buttons: str | KeyboardButton):
-        buttons = [KeyboardButton(b) if isinstance(b, str) else b for b in buttons]
-        self.keyboard.append(buttons)
-
 
 @dataclass
 class KeyboardButton(TgObject):
+    """ https://core.telegram.org/bots/api#keyboardbutton """
+
     text: str
     request_contact: bool = None
     request_location: bool = None
@@ -561,26 +578,30 @@ class KeyboardButton(TgObject):
 
 @dataclass
 class KeyboardButtonPollType(TgObject):
+    """ https://core.telegram.org/bots/api#keyboardbuttonpolltype """
+
     type: str = None
 
 
 @dataclass
 class ReplyKeyboardRemove(TgObject):
+    """ https://core.telegram.org/bots/api#replykeyboardremove """
+
     remove_keyboard: bool
     selective: bool = None
 
 
 @dataclass
 class InlineKeyboardMarkup(TgObject):
-    inline_keyboard: list[list[InlineKeyboardButton]] = None
+    """ https://core.telegram.org/bots/api#inlinekeyboardmarkup """
 
-    def add_row(self, *buttons: InlineKeyboardButton):
-        self.inline_keyboard = self.inline_keyboard or []
-        self.inline_keyboard.append(list(buttons))
+    inline_keyboard: list[list[InlineKeyboardButton]]
 
 
 @dataclass
 class InlineKeyboardButton(TgObject):
+    """ https://core.telegram.org/bots/api#inlinekeyboardbutton """
+
     text: str
     url: str = None
     callback_data: str = None
@@ -594,6 +615,8 @@ class InlineKeyboardButton(TgObject):
 
 @dataclass
 class LoginUrl(TgObject):
+    """ https://core.telegram.org/bots/api#loginurl """
+
     url: str
     forward_text: str = None
     bot_username: str = None
@@ -602,6 +625,8 @@ class LoginUrl(TgObject):
 
 @dataclass
 class CallbackQuery(TgObject):
+    """ https://core.telegram.org/bots/api#callbackquery """
+
     id: str
     from_user: User
     chat_instance: str
@@ -613,6 +638,8 @@ class CallbackQuery(TgObject):
 
 @dataclass
 class ForceReply(TgObject):
+    """ https://core.telegram.org/bots/api#forcereply """
+
     force_reply: bool
     input_field_placeholder: str = None
     selective: bool = None
@@ -620,6 +647,8 @@ class ForceReply(TgObject):
 
 @dataclass
 class ChatPhoto(TgObject):
+    """ https://core.telegram.org/bots/api#chatphoto """
+
     small_file_id: str
     small_file_unique_id: str
     big_file_id: str
@@ -628,6 +657,8 @@ class ChatPhoto(TgObject):
 
 @dataclass
 class ChatInviteLink(TgObject):
+    """ https://core.telegram.org/bots/api#chatinvitelink """
+
     invite_link: str
     creator: User
     creates_join_request: bool
@@ -641,6 +672,8 @@ class ChatInviteLink(TgObject):
 
 @dataclass
 class ChatAdministratorRights(TgObject):
+    """ https://core.telegram.org/bots/api#chatadministratorrights """
+
     is_anonymous: bool
     can_manage_chat: bool
     can_delete_messages: bool
@@ -656,12 +689,16 @@ class ChatAdministratorRights(TgObject):
 
 # abstract
 class ChatMember(TgObject):
+    """ https://core.telegram.org/bots/api#chatmember """
+
     status: str
     user: User
 
 
 @dataclass
 class ChatMemberOwner(ChatMember):
+    """ https://core.telegram.org/bots/api#chatmemberowner """
+
     user: User
     is_anonymous: bool
     custom_title: str = None
@@ -670,6 +707,8 @@ class ChatMemberOwner(ChatMember):
 
 @dataclass
 class ChatMemberAdministrator(ChatMember):
+    """ https://core.telegram.org/bots/api#chatmemberadministrator """
+
     user: User
     can_be_edited: bool
     is_anonymous: bool
@@ -689,12 +728,16 @@ class ChatMemberAdministrator(ChatMember):
 
 @dataclass
 class ChatMemberMember(ChatMember):
+    """ https://core.telegram.org/bots/api#chatmembermember """
+
     user: User
     status: str = 'member'
 
 
 @dataclass
 class ChatMemberRestricted(ChatMember):
+    """ https://core.telegram.org/bots/api#chatmemberrestricted """
+
     user: User
     is_member: bool
     can_change_info: bool
@@ -711,12 +754,16 @@ class ChatMemberRestricted(ChatMember):
 
 @dataclass
 class ChatMemberLeft(ChatMember):
+    """ https://core.telegram.org/bots/api#chatmemberleft """
+
     user: User
     status: str = 'left'
 
 
 @dataclass
 class ChatMemberBanned(ChatMember):
+    """ https://core.telegram.org/bots/api#chatmemberbanned """
+
     user: User
     until_date: int
     status: str = 'kicked'
@@ -724,6 +771,8 @@ class ChatMemberBanned(ChatMember):
 
 @dataclass
 class ChatMemberUpdated(TgObject):
+    """ https://core.telegram.org/bots/api#chatmemberupdated """
+
     chat: Chat
     from_user: User
     date: int
@@ -734,6 +783,8 @@ class ChatMemberUpdated(TgObject):
 
 @dataclass
 class ChatJoinRequest(TgObject):
+    """ https://core.telegram.org/bots/api#chatjoinrequest """
+
     chat: Chat
     from_user: User
     date: int
@@ -743,6 +794,8 @@ class ChatJoinRequest(TgObject):
 
 @dataclass
 class ChatPermissions(TgObject):
+    """ https://core.telegram.org/bots/api#chatpermissions """
+
     can_send_messages: bool = None
     can_send_media_messages: bool = None
     can_send_polls: bool = None
@@ -755,55 +808,75 @@ class ChatPermissions(TgObject):
 
 @dataclass
 class ChatLocation(TgObject):
+    """ https://core.telegram.org/bots/api#chatlocation """
+
     location: Location
     address: str
 
 
 @dataclass
 class BotCommand(TgObject):
+    """ https://core.telegram.org/bots/api#botcommand """
+
     command: str
     description: str
 
 
 # abstract
 class BotCommandScope(TgObject):
+    """ https://core.telegram.org/bots/api#botcommandscope """
+
     type: str
 
 
 @dataclass
 class BotCommandScopeDefault(BotCommandScope):
+    """ https://core.telegram.org/bots/api#botcommandscopedefault """
+
     type: str = 'default'
 
 
 @dataclass
 class BotCommandScopeAllPrivateChats(BotCommandScope):
+    """ https://core.telegram.org/bots/api#botcommandscopeallprivatechats """
+
     type: str = 'all_private_chats'
 
 
 @dataclass
 class BotCommandScopeAllGroupChats(BotCommandScope):
+    """ https://core.telegram.org/bots/api#botcommandscopeallgroupchats """
+
     type: str = 'all_group_chats'
 
 
 @dataclass
 class BotCommandScopeAllChatAdministrators(BotCommandScope):
+    """ https://core.telegram.org/bots/api#botcommandscopeallchatadministrators """
+
     type: str = 'all_chat_administrators'
 
 
 @dataclass
 class BotCommandScopeChat(BotCommandScope):
+    """ https://core.telegram.org/bots/api#botcommandscopechat """
+
     chat_id: int | str
     type: str = 'chat'
 
 
 @dataclass
 class BotCommandScopeChatAdministrators(BotCommandScope):
+    """ https://core.telegram.org/bots/api#botcommandscopechatadministrators """
+
     chat_id: int | str
     type: str = 'chat_administrators'
 
 
 @dataclass
 class BotCommandScopeChatMember(BotCommandScope):
+    """ https://core.telegram.org/bots/api#botcommandscopechatmember """
+
     chat_id: int | str
     user_id: int
     type: str = 'chat_member'
@@ -811,16 +884,20 @@ class BotCommandScopeChatMember(BotCommandScope):
 
 @dataclass
 class MenuButton(TgObject):
-    pass
+    """ https://core.telegram.org/bots/api#menubutton """
 
 
 @dataclass
 class MenuButtonCommands(MenuButton):
+    """ https://core.telegram.org/bots/api#menubuttoncommands """
+
     type: str
 
 
 @dataclass
 class MenuButtonWebApp(MenuButton):
+    """ https://core.telegram.org/bots/api#menubuttonwebapp """
+
     type: str
     text: str
     web_app: WebAppInfo
@@ -828,22 +905,28 @@ class MenuButtonWebApp(MenuButton):
 
 @dataclass
 class MenuButtonDefault(MenuButton):
+    """ https://core.telegram.org/bots/api#menubuttondefault """
+
     type: str
 
 
 @dataclass
 class ResponseParameters(TgObject):
+    """ https://core.telegram.org/bots/api#responseparameters """
+
     migrate_to_chat_id: int = None
     retry_after: int = None
 
 
 @dataclass
 class InputMedia(TgObject):
-    pass
+    """ https://core.telegram.org/bots/api#inputmedia """
 
 
 @dataclass
 class InputMediaPhoto(InputMedia):
+    """ https://core.telegram.org/bots/api#inputmediaphoto """
+
     type: str
     media: str
     caption: str = None
@@ -853,6 +936,8 @@ class InputMediaPhoto(InputMedia):
 
 @dataclass
 class InputMediaVideo(InputMedia):
+    """ https://core.telegram.org/bots/api#inputmediavideo """
+
     type: str
     media: str
     thumb: InputFile | str = None
@@ -867,6 +952,8 @@ class InputMediaVideo(InputMedia):
 
 @dataclass
 class InputMediaAnimation(InputMedia):
+    """ https://core.telegram.org/bots/api#inputmediaanimation """
+
     type: str
     media: str
     thumb: InputFile | str = None
@@ -880,6 +967,8 @@ class InputMediaAnimation(InputMedia):
 
 @dataclass
 class InputMediaAudio(InputMedia):
+    """ https://core.telegram.org/bots/api#inputmediaaudio """
+
     type: str
     media: str
     thumb: InputFile | str = None
@@ -893,6 +982,8 @@ class InputMediaAudio(InputMedia):
 
 @dataclass
 class InputMediaDocument(InputMedia):
+    """ https://core.telegram.org/bots/api#inputmediadocument """
+
     type: str
     media: str
     thumb: InputFile | str = None
@@ -903,14 +994,18 @@ class InputMediaDocument(InputMedia):
 
 
 @dataclass
-class InputFile(TgObject):  # TODO
-    ...
+class InputFile(TgObject):
+    """ https://core.telegram.org/bots/api#inputfile """
+
+    path: str
 
 
-# ==> Stickers
+# ==> Section: https://core.telegram.org/bots/api#stickers
 
 @dataclass
 class Sticker(TgObject):
+    """ https://core.telegram.org/bots/api#sticker """
+
     file_id: str
     file_unique_id: str
     width: int
@@ -926,6 +1021,8 @@ class Sticker(TgObject):
 
 @dataclass
 class StickerSet(TgObject):
+    """ https://core.telegram.org/bots/api#stickerset """
+
     name: str
     title: str
     is_animated: bool
@@ -937,16 +1034,20 @@ class StickerSet(TgObject):
 
 @dataclass
 class MaskPosition(TgObject):
+    """ https://core.telegram.org/bots/api#maskposition """
+
     point: str
     x_shift: float
     y_shift: float
     scale: float
 
 
-# ==> Inline mode
+# ==> Section: https://core.telegram.org/bots/api#inline-mode
 
 @dataclass
 class InlineQuery(TgObject):
+    """ https://core.telegram.org/bots/api#inlinequery """
+
     id: str
     from_user: User
     query: str
@@ -957,11 +1058,13 @@ class InlineQuery(TgObject):
 
 @dataclass
 class InlineQueryResult(TgObject):
-    pass
+    """ https://core.telegram.org/bots/api#inlinequeryresult """
 
 
 @dataclass
 class InlineQueryResultArticle(InlineQueryResult):
+    """ https://core.telegram.org/bots/api#inlinequeryresultarticle """
+
     type: str
     id: str
     title: str
@@ -977,6 +1080,8 @@ class InlineQueryResultArticle(InlineQueryResult):
 
 @dataclass
 class InlineQueryResultPhoto(InlineQueryResult):
+    """ https://core.telegram.org/bots/api#inlinequeryresultphoto """
+
     type: str
     id: str
     photo_url: str
@@ -994,6 +1099,8 @@ class InlineQueryResultPhoto(InlineQueryResult):
 
 @dataclass
 class InlineQueryResultGif(InlineQueryResult):
+    """ https://core.telegram.org/bots/api#inlinequeryresultgif """
+
     type: str
     id: str
     gif_url: str
@@ -1012,6 +1119,8 @@ class InlineQueryResultGif(InlineQueryResult):
 
 @dataclass
 class InlineQueryResultMpeg4Gif(InlineQueryResult):
+    """ https://core.telegram.org/bots/api#inlinequeryresultmpeg4gif """
+
     type: str
     id: str
     mpeg4_url: str
@@ -1030,6 +1139,8 @@ class InlineQueryResultMpeg4Gif(InlineQueryResult):
 
 @dataclass
 class InlineQueryResultVideo(InlineQueryResult):
+    """ https://core.telegram.org/bots/api#inlinequeryresultvideo """
+
     type: str
     id: str
     video_url: str
@@ -1049,6 +1160,8 @@ class InlineQueryResultVideo(InlineQueryResult):
 
 @dataclass
 class InlineQueryResultAudio(InlineQueryResult):
+    """ https://core.telegram.org/bots/api#inlinequeryresultaudio """
+
     type: str
     id: str
     audio_url: str
@@ -1064,6 +1177,8 @@ class InlineQueryResultAudio(InlineQueryResult):
 
 @dataclass
 class InlineQueryResultVoice(InlineQueryResult):
+    """ https://core.telegram.org/bots/api#inlinequeryresultvoice """
+
     type: str
     id: str
     voice_url: str
@@ -1078,6 +1193,8 @@ class InlineQueryResultVoice(InlineQueryResult):
 
 @dataclass
 class InlineQueryResultDocument(InlineQueryResult):
+    """ https://core.telegram.org/bots/api#inlinequeryresultdocument """
+
     type: str
     id: str
     title: str
@@ -1096,6 +1213,8 @@ class InlineQueryResultDocument(InlineQueryResult):
 
 @dataclass
 class InlineQueryResultLocation(InlineQueryResult):
+    """ https://core.telegram.org/bots/api#inlinequeryresultlocation """
+
     type: str
     id: str
     latitude: float
@@ -1114,6 +1233,8 @@ class InlineQueryResultLocation(InlineQueryResult):
 
 @dataclass
 class InlineQueryResultVenue(InlineQueryResult):
+    """ https://core.telegram.org/bots/api#inlinequeryresultvenue """
+
     type: str
     id: str
     latitude: float
@@ -1133,6 +1254,8 @@ class InlineQueryResultVenue(InlineQueryResult):
 
 @dataclass
 class InlineQueryResultContact(InlineQueryResult):
+    """ https://core.telegram.org/bots/api#inlinequeryresultcontact """
+
     type: str
     id: str
     phone_number: str
@@ -1148,6 +1271,8 @@ class InlineQueryResultContact(InlineQueryResult):
 
 @dataclass
 class InlineQueryResultGame(InlineQueryResult):
+    """ https://core.telegram.org/bots/api#inlinequeryresultgame """
+
     type: str
     id: str
     game_short_name: str
@@ -1156,6 +1281,8 @@ class InlineQueryResultGame(InlineQueryResult):
 
 @dataclass
 class InlineQueryResultCachedPhoto(InlineQueryResult):
+    """ https://core.telegram.org/bots/api#inlinequeryresultcachedphoto """
+
     type: str
     id: str
     photo_file_id: str
@@ -1170,6 +1297,8 @@ class InlineQueryResultCachedPhoto(InlineQueryResult):
 
 @dataclass
 class InlineQueryResultCachedGif(InlineQueryResult):
+    """ https://core.telegram.org/bots/api#inlinequeryresultcachedgif """
+
     type: str
     id: str
     gif_file_id: str
@@ -1183,6 +1312,8 @@ class InlineQueryResultCachedGif(InlineQueryResult):
 
 @dataclass
 class InlineQueryResultCachedMpeg4Gif(InlineQueryResult):
+    """ https://core.telegram.org/bots/api#inlinequeryresultcachedmpeg4gif """
+
     type: str
     id: str
     mpeg4_file_id: str
@@ -1196,6 +1327,8 @@ class InlineQueryResultCachedMpeg4Gif(InlineQueryResult):
 
 @dataclass
 class InlineQueryResultCachedSticker(InlineQueryResult):
+    """ https://core.telegram.org/bots/api#inlinequeryresultcachedsticker """
+
     type: str
     id: str
     sticker_file_id: str
@@ -1205,6 +1338,8 @@ class InlineQueryResultCachedSticker(InlineQueryResult):
 
 @dataclass
 class InlineQueryResultCachedDocument(InlineQueryResult):
+    """ https://core.telegram.org/bots/api#inlinequeryresultcacheddocument """
+
     type: str
     id: str
     title: str
@@ -1219,6 +1354,8 @@ class InlineQueryResultCachedDocument(InlineQueryResult):
 
 @dataclass
 class InlineQueryResultCachedVideo(InlineQueryResult):
+    """ https://core.telegram.org/bots/api#inlinequeryresultcachedvideo """
+
     type: str
     id: str
     video_file_id: str
@@ -1233,6 +1370,8 @@ class InlineQueryResultCachedVideo(InlineQueryResult):
 
 @dataclass
 class InlineQueryResultCachedVoice(InlineQueryResult):
+    """ https://core.telegram.org/bots/api#inlinequeryresultcachedvoice """
+
     type: str
     id: str
     voice_file_id: str
@@ -1246,6 +1385,8 @@ class InlineQueryResultCachedVoice(InlineQueryResult):
 
 @dataclass
 class InlineQueryResultCachedAudio(InlineQueryResult):
+    """ https://core.telegram.org/bots/api#inlinequeryresultcachedaudio """
+
     type: str
     id: str
     audio_file_id: str
@@ -1258,11 +1399,13 @@ class InlineQueryResultCachedAudio(InlineQueryResult):
 
 @dataclass
 class InputMessageContent(TgObject):
-    pass
+    """ https://core.telegram.org/bots/api#inputmessagecontent """
 
 
 @dataclass
 class InputTextMessageContent(InputMessageContent):
+    """ https://core.telegram.org/bots/api#inputtextmessagecontent """
+
     message_text: str
     parse_mode: str = None
     entities: list[MessageEntity] = None
@@ -1271,6 +1414,8 @@ class InputTextMessageContent(InputMessageContent):
 
 @dataclass
 class InputLocationMessageContent(InputMessageContent):
+    """ https://core.telegram.org/bots/api#inputlocationmessagecontent """
+
     latitude: float
     longitude: float
     horizontal_accuracy: float = None
@@ -1281,18 +1426,22 @@ class InputLocationMessageContent(InputMessageContent):
 
 @dataclass
 class InputVenueMessageContent(InputMessageContent):
+    """ https://core.telegram.org/bots/api#inputvenuemessagecontent """
+
     latitude: float
     longitude: float
     title: str
     address: str
     foursquare_id: str = None
-    foursquare_InputMessageContent: str = None
+    foursquare_type: str = None
     google_place_id: str = None
-    google_place_InputMessageContent: str = None
+    google_place_type: str = None
 
 
 @dataclass
 class InputContactMessageContent(InputMessageContent):
+    """ https://core.telegram.org/bots/api#inputcontactmessagecontent """
+
     phone_number: str
     first_name: str
     last_name: str = None
@@ -1301,6 +1450,8 @@ class InputContactMessageContent(InputMessageContent):
 
 @dataclass
 class InputInvoiceMessageContent(InputMessageContent):
+    """ https://core.telegram.org/bots/api#inputinvoicemessagecontent """
+
     title: str
     description: str
     payload: str
@@ -1325,6 +1476,8 @@ class InputInvoiceMessageContent(InputMessageContent):
 
 @dataclass
 class ChosenInlineResult(TgObject):
+    """ https://core.telegram.org/bots/api#choseninlineresult """
+
     result_id: str
     from_user: User
     query: str
@@ -1334,19 +1487,25 @@ class ChosenInlineResult(TgObject):
 
 @dataclass
 class SentWebAppMessage(TgObject):
+    """ https://core.telegram.org/bots/api#sentwebappmessage """
+
     inline_message_id: str = None
 
 
-# ==> Payments
+# ==> Section: https://core.telegram.org/bots/api#payments
 
 @dataclass
 class LabeledPrice(TgObject):
+    """ https://core.telegram.org/bots/api#labeledprice """
+
     label: str
     amount: int
 
 
 @dataclass
 class Invoice(TgObject):
+    """ https://core.telegram.org/bots/api#invoice """
+
     title: str
     description: str
     start_parameter: str
@@ -1356,6 +1515,8 @@ class Invoice(TgObject):
 
 @dataclass
 class ShippingAddress(TgObject):
+    """ https://core.telegram.org/bots/api#shippingaddress """
+
     country_code: str
     state: str
     city: str
@@ -1366,6 +1527,8 @@ class ShippingAddress(TgObject):
 
 @dataclass
 class OrderInfo(TgObject):
+    """ https://core.telegram.org/bots/api#orderinfo """
+
     name: str = None
     phone_number: str = None
     email: str = None
@@ -1374,6 +1537,8 @@ class OrderInfo(TgObject):
 
 @dataclass
 class ShippingOption(TgObject):
+    """ https://core.telegram.org/bots/api#shippingoption """
+
     id: str
     title: str
     prices: list[LabeledPrice]
@@ -1381,6 +1546,8 @@ class ShippingOption(TgObject):
 
 @dataclass
 class SuccessfulPayment(TgObject):
+    """ https://core.telegram.org/bots/api#successfulpayment """
+
     currency: str
     total_amount: int
     invoice_payload: str
@@ -1392,6 +1559,8 @@ class SuccessfulPayment(TgObject):
 
 @dataclass
 class ShippingQuery(TgObject):
+    """ https://core.telegram.org/bots/api#shippingquery """
+
     id: str
     from_user: User
     invoice_payload: str
@@ -1400,6 +1569,8 @@ class ShippingQuery(TgObject):
 
 @dataclass
 class PreCheckoutQuery(TgObject):
+    """ https://core.telegram.org/bots/api#precheckoutquery """
+
     id: str
     from_user: User
     currency: str
@@ -1409,16 +1580,20 @@ class PreCheckoutQuery(TgObject):
     order_info: OrderInfo = None
 
 
-# ==> Telegram Passport
+# ==> Section: https://core.telegram.org/bots/api#telegram-passport
 
 @dataclass
 class PassportData(TgObject):
+    """ https://core.telegram.org/bots/api#passportdata """
+
     data: list[EncryptedPassportElement]
     credentials: EncryptedCredentials
 
 
 @dataclass
 class PassportFile(TgObject):
+    """ https://core.telegram.org/bots/api#passportfile """
+
     file_id: str
     file_unique_id: str
     file_size: int
@@ -1427,6 +1602,8 @@ class PassportFile(TgObject):
 
 @dataclass
 class EncryptedPassportElement(TgObject):
+    """ https://core.telegram.org/bots/api#encryptedpassportelement """
+
     type: str
     hash: str
     data: str = None
@@ -1441,6 +1618,8 @@ class EncryptedPassportElement(TgObject):
 
 @dataclass
 class EncryptedCredentials(TgObject):
+    """ https://core.telegram.org/bots/api#encryptedcredentials """
+
     data: str
     hash: str
     secret: str
@@ -1448,11 +1627,13 @@ class EncryptedCredentials(TgObject):
 
 @dataclass
 class PassportElementError(TgObject):
-    pass
+    """ https://core.telegram.org/bots/api#passportelementerror """
 
 
 @dataclass
 class PassportElementErrorDataField(PassportElementError):
+    """ https://core.telegram.org/bots/api#passportelementerrordatafield """
+
     source: str
     type: str
     field_name: str
@@ -1462,6 +1643,8 @@ class PassportElementErrorDataField(PassportElementError):
 
 @dataclass
 class PassportElementErrorFrontSide(PassportElementError):
+    """ https://core.telegram.org/bots/api#passportelementerrorfrontside """
+
     source: str
     type: str
     file_hash: str
@@ -1470,6 +1653,8 @@ class PassportElementErrorFrontSide(PassportElementError):
 
 @dataclass
 class PassportElementErrorReverseSide(PassportElementError):
+    """ https://core.telegram.org/bots/api#passportelementerrorreverseside """
+
     source: str
     type: str
     file_hash: str
@@ -1478,6 +1663,8 @@ class PassportElementErrorReverseSide(PassportElementError):
 
 @dataclass
 class PassportElementErrorSelfie(PassportElementError):
+    """ https://core.telegram.org/bots/api#passportelementerrorselfie """
+
     source: str
     type: str
     file_hash: str
@@ -1486,6 +1673,8 @@ class PassportElementErrorSelfie(PassportElementError):
 
 @dataclass
 class PassportElementErrorFile(PassportElementError):
+    """ https://core.telegram.org/bots/api#passportelementerrorfile """
+
     source: str
     type: str
     file_hash: str
@@ -1494,6 +1683,8 @@ class PassportElementErrorFile(PassportElementError):
 
 @dataclass
 class PassportElementErrorFiles(PassportElementError):
+    """ https://core.telegram.org/bots/api#passportelementerrorfiles """
+
     source: str
     type: str
     file_hashes: list[str]
@@ -1502,6 +1693,8 @@ class PassportElementErrorFiles(PassportElementError):
 
 @dataclass
 class PassportElementErrorTranslationFile(PassportElementError):
+    """ https://core.telegram.org/bots/api#passportelementerrortranslationfile """
+
     source: str
     type: str
     file_hash: str
@@ -1510,6 +1703,8 @@ class PassportElementErrorTranslationFile(PassportElementError):
 
 @dataclass
 class PassportElementErrorTranslationFiles(PassportElementError):
+    """ https://core.telegram.org/bots/api#passportelementerrortranslationfiles """
+
     source: str
     type: str
     file_hashes: list[str]
@@ -1518,16 +1713,20 @@ class PassportElementErrorTranslationFiles(PassportElementError):
 
 @dataclass
 class PassportElementErrorUnspecified(PassportElementError):
+    """ https://core.telegram.org/bots/api#passportelementerrorunspecified """
+
     source: str
     type: str
     element_hash: str
     message: str
 
 
-# ==> Games
+# ==> Section: https://core.telegram.org/bots/api#games
 
 @dataclass
 class Game(TgObject):
+    """ https://core.telegram.org/bots/api#game """
+
     title: str
     description: str
     photo: list[PhotoSize]
@@ -1538,6 +1737,8 @@ class Game(TgObject):
 
 @dataclass
 class CallbackGame(TgObject):
+    """ https://core.telegram.org/bots/api#callbackgame """
+
     user_id: int
     score: int
     force: bool = None
@@ -1549,6 +1750,8 @@ class CallbackGame(TgObject):
 
 @dataclass
 class GameHighScore(TgObject):
+    """ https://core.telegram.org/bots/api#gamehighscore """
+
     position: int
     user: User
     score: int

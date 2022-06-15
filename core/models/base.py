@@ -8,9 +8,9 @@ import mongoengine as me
 
 from .. import utils
 
-__all__ = ['BaseModel', 'BaseDocument', 'SimpleTypes']
+__all__ = ['BaseModel', 'BaseDocument', 'TgObject', 'SimpleTypes']
 
-DocT = typing.TypeVar('DocT', bound='Document')
+DocT = typing.TypeVar('DocT', bound='BaseDocument')
 SimpleTypes = int | float | bool | str | list | dict
 
 
@@ -108,3 +108,9 @@ class BaseDocument(me.Document):
 
     def to_dict(self) -> dict:
         return json.loads(self.to_json())
+
+
+class TgObject(BaseModel):
+    """ Base class for all telegram objects """
+
+    __aliases__ = {'from_user': 'from'}
