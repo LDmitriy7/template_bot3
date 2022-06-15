@@ -1,3 +1,5 @@
+""" https://core.telegram.org/bots/api#available-types (v 6.0) """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -143,6 +145,8 @@ __all__ = [
 
 
 class TgObject(BaseModel):
+    """ Base class for all telegram objects """
+
     __aliases__ = {'from_user': 'from'}
 
 
@@ -532,9 +536,10 @@ class ReplyKeyboardRemove(TgObject):
 
 @dataclass
 class InlineKeyboardMarkup(TgObject):
-    inline_keyboard: list[list[InlineKeyboardButton]] = field(default_factory=list)
+    inline_keyboard: list[list[InlineKeyboardButton]] = None
 
     def add_row(self, *buttons: InlineKeyboardButton):
+        self.inline_keyboard = self.inline_keyboard or []
         self.inline_keyboard.append(list(buttons))
 
 

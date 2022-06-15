@@ -7,7 +7,7 @@ from .tg_objects import *
 __all__ = [
     # Base
     'BaseModel',
-    'Document',
+    'BaseDocument',
 
     # Telegram objects
     'TgObject',
@@ -21,7 +21,7 @@ __all__ = [
     'PhotoSize',
     'Animation',
     'Audio',
-    'Document',
+    'BaseDocument',
     'Video',
     'VideoNote',
     'Voice',
@@ -165,4 +165,5 @@ __all__ = [
     'create_chat_invite_link',
     'copy_message',
     'edit_message_text',
+    'delete_message',
 ]

@@ -5,29 +5,22 @@ from dataclasses import dataclass
 
 from . import documents as doc
 from . import tg_objects
+from .base import BaseModel
 from .. import constants as c
 
-__all__ = [
-    'NewObject',
-    'CallbackButton',
-    'UrlButton',
-    'Translations',
-    'State',
-]
+
+class NewObject(BaseModel):
+    pass
 
 
-class NewObject:
-
-    def to_dict(self) -> dict:
-        pass
-
-
+@dataclass
 class CallbackButton:
+    text: str
+    button_id: str = None
+    _vars = {}
 
-    def __init__(self, text: str, button_id: str = None):
-        self.text = text
-        self.button_id = button_id or text
-        self._vars = {}
+    def __post_init__(self):
+        self.button_id = self.button_id or self.text
 
     def __getitem__(self, item):
         return self._vars[item]
@@ -41,18 +34,23 @@ class CallbackButton:
     def save(self) -> str:
         string = f'{self.text}|{self.button_id}|{self._vars}'
         doc_id = hashlib.md5(string.encode()).hexdigest()
-        doc.CallbackButton(_id=doc_id, text=self.text, button_id=self.button_id, vars=self._vars).save()
+        doc.CallbackButton(
+            _id=doc_id,
+            text=self.text,
+            button_id=self.button_id,
+            vars=self._vars
+        ).save()
         return doc_id
 
     @classmethod
     def get_button(cls, doc_id: str) -> CallbackButton | None:
-        d = doc.CallbackButton.get_doc(_id=doc_id)
+        _doc = doc.CallbackButton.get_doc(_id=doc_id)
 
-        if not d:
+        if not _doc:
             return None
 
-        button = CallbackButton(d.text, d.button_id)
-        button._vars = d.vars
+        button = CallbackButton(_doc.text, _doc.button_id)
+        button._vars = _doc.vars
         return button
 
     def __call__(self, **_vars: str | int | list | dict | set) -> tg_objects.InlineKeyboardButton:
@@ -69,14 +67,28 @@ class CallbackButton:
 
 @dataclass
 class Translations:
+    """
+    Inherit and add your languages:
+
+    >>> @dataclass
+    ... class Ts(Translations):
+    ...     ru: str
+    ...     ua: str
+
+    >>> hi = Ts('Hi', ru='Привет', ua='Вітання')
+
+    >>> assert hi.get() == 'Hi'
+    >>> assert hi.get('ua') == 'Вітання'
+    >>> assert hi.get('unknown') == 'Hi'
+    """
+
     default: str
 
     def _get_default(self):
         return getattr(self, c.DEFAULT)
 
-    def get(self, lang: str = c.DEFAULT):
-        if not lang:
-            return self._get_default()
+    def get(self, lang: str = c.DEFAULT) -> str:
+        """ Return translation to `lang` or `default` """
         return getattr(self, lang, self._get_default())
 
 

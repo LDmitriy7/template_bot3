@@ -26,11 +26,41 @@ class Task:
     func: Func
 
 
+def handle_options(exclusive=True, first=False, last=False, after_any=False):
+    """
+    By default,
+
+    :param exclusive: handling will be finished if this handler was executed
+    :param first: handler will be moved to `pre_handlers`
+    :param last: handler will be moved to `post_handlers`
+    :param after_any: handler will be moved to `post_any_handler`
+
+    If `last=True`, handler will be moved to `post_handlers`,
+    If `first=True`, handler will be moved to `pre_handlers`,
+
+
+    last -> `post_handlers` group
+    after_any -> `post_any_handlers` group
+    """
+    params = {k: v for k, v in locals().items()}
+
+    def _(func):
+        func.__handle_options__ = params
+        return func
+
+    return _
+
+
 class Bot:
     def __init__(self):
         self.handlers: list[Handler] = []
         self.pre_middlewares: list[Handler] = []
         self.post_middlewares: list[Handler] = []
+
+        self.pre_handlers: list[Handler] = []
+        self.post_handlers: list[Handler] = []
+        self.post_any_handlers: list[Handler] = []
+
         self.tasks: list[Task] = []
         self.session = requests.Session()
 
@@ -58,8 +88,8 @@ class Bot:
 
         if result[c.OK]:
             return result[c.RESULT]
-        else:
-            raise exceptions.Error(result[c.ERROR_CODE], result[c.DESCRIPTION])
+
+        raise exceptions.Error(result[c.ERROR_CODE], result[c.DESCRIPTION])
 
 
 bot = Bot()

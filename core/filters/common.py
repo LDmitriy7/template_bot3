@@ -32,7 +32,7 @@ class State(Filter):
     def check(self, _):
         from ..context import ctx
 
-        return self.value == '*' or ctx.state == self.value
+        return self.value in ['*', ctx.state]
 
 
 @dataclass

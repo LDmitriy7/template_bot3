@@ -7,4 +7,4 @@ from ..models.tg_objects import Update
 class Filter:
 
     def check(self, update: Update) -> bool:
-        raise NotImplemented()
+        raise NotImplementedError()

@@ -1,9 +1,11 @@
-from __future__ import annotations
+# from __future__ import annotations
 
 import typing
 from dataclasses import dataclass
 
-from core import ctx, BaseModel
+import mongoengine as me
+
+from core import ctx, BaseModel, BaseDocument
 
 T = typing.TypeVar('T', bound='MyModel')
 
@@ -19,10 +21,20 @@ class ModelProxy(typing.Generic[T]):
         self._obj.save()
 
 
-class MyModel(BaseModel):
+class Collection(BaseDocument):
+    user_id: int = me.IntField()
+    model: str = me.StringField()
+    obj: dict = me.DictField()
+
+    meta = {
+        'collection': 'Collections__',
+    }
+
+
+class Model(BaseModel):
 
     @classmethod
-    def get(cls) -> MyModel:
+    def get(cls) -> 'Model':
         storage = ctx.storage
         model = storage.models.get(cls.__name__)
         if not model:
@@ -34,13 +46,25 @@ class MyModel(BaseModel):
         storage.models[self.__class__.__name__] = self.to_dict()
         storage.save()
 
+    def save_to_collection(self):
+        Collection(
+            user_id=ctx.user_id,
+            model=self.__class__.__name__,
+            obj=self.to_dict(),
+        ).save()
+
+    @classmethod
+    def get_collection(cls: type[T]) -> list[T]:
+        docs = Collection.get_docs(user_id=ctx.user_id, model=cls.__name__)
+        return [cls.from_dict(doc.obj) for doc in docs]
+
     @classmethod
     def proxy(cls: type[T]) -> ModelProxy[T]:
         return ModelProxy(cls.get())
 
 
 @dataclass
-class Vacancy(MyModel):
+class Vacancy(Model):
     title: str = None
     work_experience: str = None
     salary: str = None
@@ -49,14 +73,14 @@ class Vacancy(MyModel):
 
 
 @dataclass
-class Institution(MyModel):
+class Institution(Model):
     type: str = None
     name: str = None
     address: str = None
 
 
 @dataclass
-class Ad(MyModel):
+class Ad(Model):
     regional_city: str = None
     city: str = None
     institution: Institution = None
@@ -67,15 +91,15 @@ class Ad(MyModel):
 
 
 @dataclass
-class Order(MyModel):
-    ad: Ad
-    pin: bool
-    duplicate: bool
-    price: int
-    created_from: str
-    channel_id: int
-    paid_up: bool
-    approved: bool
-    posts_dates: list[int]
-    user_id: int
-    date: int
+class Order(Model):
+    ad: Ad = None
+    pin: bool = None
+    duplicate: bool = None
+    price: int = None
+    created_from: str = None
+    channel_id: int = None
+    paid_up: bool = None
+    approved: bool = None
+    posts_dates: list[int] = None
+    user_id: int = None
+    date: int = None

@@ -48,9 +48,9 @@ class Env:
 
         if value in ['True', 'true', '1']:
             return True
-        elif value in ['False', 'false', '0']:
+        if value in ['False', 'false', '0']:
             return False
-        elif value == default:
+        if value == default:
             return default
         raise ValueError(f'Can\'t cast env ${key} to bool')
 
@@ -60,7 +60,7 @@ class Env:
 
         try:
             return int(value)
-        except:
+        except (ValueError, TypeError):
             if value == default:
                 return default
 
@@ -72,7 +72,7 @@ class Env:
 
         try:
             return [i.strip() for i in value.strip(sep).split(sep)]
-        except:
+        except (ValueError, TypeError):
             if value == default:
                 return default
 
@@ -84,7 +84,7 @@ class Env:
 
         try:
             return [int(i.strip()) for i in value.strip(sep).split(sep)]
-        except:
+        except (ValueError, TypeError):
             if value == default:
                 return default
 

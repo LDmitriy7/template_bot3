@@ -5,14 +5,15 @@ from .context import ctx
 from .handlers import *
 from .loader import logger
 from .models import *
-from .run import run
+from .run import run, process_update
 from .utils import env
+from . import filters
 
 # aliases
 exc = exceptions
 c = const = constants
 log = logger
-doc = documents
+# doc = documents
 
 __all__ = [
     # Singletons
@@ -24,11 +25,12 @@ __all__ = [
     # Scopes
     'exc', 'exceptions',
     'c', 'const', 'constants',
-    'doc', 'documents',
+    'filters',
+    # 'doc', 'documents',
 
     # Base models
     'BaseModel',
-    'Document',
+    'BaseDocument',
 
     # Telegram objects
     'TgObject',
@@ -42,7 +44,7 @@ __all__ = [
     'PhotoSize',
     'Animation',
     'Audio',
-    'Document',
+    'BaseDocument',
     'Video',
     'VideoNote',
     'Voice',
@@ -183,6 +185,7 @@ __all__ = [
     'create_chat_invite_link',
     'copy_message',
     'edit_message_text',
+    'delete_message',
 
     # Handlers
     'on_text',
@@ -200,4 +203,5 @@ __all__ = [
 
     # Run
     'run',
+    'process_update',
 ]

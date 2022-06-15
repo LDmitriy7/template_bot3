@@ -24,6 +24,6 @@ class Cancel(Exception):
 def suppress(*exceptions, log: bool = True, **log_kwargs):
     try:
         yield
-    except exceptions as e:
+    except exceptions as exc:
         if log:
-            logger.exception(f'{e} | {log_kwargs}')
+            logger.exception(f'{exc} | {log_kwargs}')

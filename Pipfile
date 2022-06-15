@@ -12,6 +12,8 @@ my = "*"
 params = "*"
 
 [dev-packages]
+pylint = "*"
+aiogram = "*"
 
 [requires]
 python_version = "3.10"

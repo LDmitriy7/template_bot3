@@ -8,37 +8,37 @@ import mongoengine as me
 
 from .. import utils
 
-__all__ = ['BaseModel', 'Document']
+__all__ = ['BaseModel', 'BaseDocument', 'SimpleTypes']
 
-T = typing.TypeVar('T')
+DocT = typing.TypeVar('DocT', bound='Document')
 SimpleTypes = int | float | bool | str | list | dict
 
 
-def get_field_types(f: Field) -> list:
-    return utils.listify(getattr(f.type, '__args__', f.type))
+def get_field_types(field: Field) -> list:
+    return utils.listify(getattr(field.type, '__args__', field.type))
 
 
-def is_list_type(t):
-    return getattr(t, '__origin__', None) == list
+def is_list_type(_type):
+    return getattr(_type, '__origin__', None) == list
 
 
-def prepare_dict(d: dict, cast_types: list) -> dict | BaseModel:
-    for t in cast_types:
-        if issubclass(t, BaseModel):
-            return t.from_dict(d)
-    return d
+def prepare_dict(_dict: dict, cast_types: list) -> dict | BaseModel:
+    for _type in cast_types:
+        if issubclass(_type, BaseModel):
+            return _type.from_dict(_dict)
+    return _dict
 
 
-def prepare_list(li: list, cast_types: list) -> list[SimpleTypes] | list[BaseModel]:
+def prepare_list(_list: list, cast_types: list) -> list[SimpleTypes] | list[BaseModel]:
     new_list = []
 
-    for item in li:
+    for item in _list:
         if isinstance(item, dict):
             item = prepare_dict(item, cast_types)
         elif isinstance(item, list):
-            for t in cast_types:
-                if is_list_type(t):
-                    cast_types = getattr(t, '__args__', [])
+            for _type in cast_types:
+                if is_list_type(_type):
+                    cast_types = getattr(_type, '__args__', [])
                     item = prepare_list(item, cast_types)
                     break
 
@@ -47,12 +47,12 @@ def prepare_list(li: list, cast_types: list) -> list[SimpleTypes] | list[BaseMod
     return new_list
 
 
-def prepare_value(v: SimpleTypes, cast_types: list) -> SimpleTypes | BaseModel | list[BaseModel]:
-    if isinstance(v, list):
-        return prepare_list(v, cast_types)
-    elif isinstance(v, dict):
-        return prepare_dict(v, cast_types)
-    return v
+def prepare_value(value: SimpleTypes, cast_types: list) -> SimpleTypes | BaseModel | list[BaseModel]:
+    if isinstance(value, list):
+        return prepare_list(value, cast_types)
+    if isinstance(value, dict):
+        return prepare_dict(value, cast_types)
+    return value
 
 
 @dataclass
@@ -60,18 +60,18 @@ class BaseModel:
     __aliases__ = {}
 
     @classmethod
-    def from_dict(cls, d: dict):
+    def from_dict(cls, _dict: dict):
         prepared_dict = {}
 
         for field in cls._get_fields():
-            if field.name in d:
+            if field.name in _dict:
                 key = field.name
             elif field.name in cls.__aliases__:
                 key = cls.__aliases__[field.name]
             else:
                 continue
 
-            field_value = d[key]
+            field_value = _dict[key]
             field_types = get_field_types(field)
             prepared_dict[field.name] = prepare_value(field_value, field_types)
 
@@ -93,17 +93,17 @@ class BaseModel:
         return list(fields_dict.values())
 
 
-class Document(me.Document):
+class BaseDocument(me.Document):
     meta = {
         'abstract': True,
     }
 
     @classmethod
-    def get_doc(cls: type[T], *args, **kwargs) -> T | None:
+    def get_doc(cls: type[DocT], *args, **kwargs) -> DocT | None:
         return cls.objects(*args, **kwargs).first()
 
     @classmethod
-    def get_docs(cls: type[T], *args, **kwargs) -> list[T]:
+    def get_docs(cls: type[DocT], *args, **kwargs) -> list[DocT]:
         return [d for d in cls.objects(*args, **kwargs)]
 
     def to_dict(self) -> dict:

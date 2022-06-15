@@ -1,5 +1,4 @@
 from assets import *
-from core import *
 
 
 @on_button(kb.MainMenu.change_lang)

@@ -2,19 +2,19 @@ from __future__ import annotations
 
 import mongoengine as me
 
-from .base import Document
+from .base import BaseDocument
 
 __all__ = ['CallbackButton', 'Storage']
 
 
-class CallbackButton(Document):
+class CallbackButton(BaseDocument):
     _id: str = me.StringField(primary_key=True)
     text: str = me.StringField()
     button_id: str = me.StringField()
     vars: dict = me.DictField()
 
     meta = {
-        'collection': f'CallbackButtons__'
+        'collection': 'CallbackButtons__'
     }
 
 
@@ -23,7 +23,7 @@ class UserKey(me.EmbeddedDocument):
     user_id: int = me.IntField()
 
 
-class Storage(Document):
+class Storage(BaseDocument):
     key: UserKey = me.EmbeddedDocumentField(UserKey, primary_key=True)
     state: str = me.StringField()
     lang: str = me.StringField()
@@ -36,5 +36,5 @@ class Storage(Document):
         return cls.get_doc(key=key) or Storage(key=key).save()
 
     meta = {
-        'collection': f'Storage__'
+        'collection': 'Storage__'
     }

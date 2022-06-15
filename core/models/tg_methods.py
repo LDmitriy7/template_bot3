@@ -1,6 +1,7 @@
 from typing import Any
 
-from .new_objects import *
+from .base import SimpleTypes
+from .new_objects import Translations
 from .tg_objects import *
 
 __all__ = [
@@ -13,9 +14,8 @@ __all__ = [
     'create_chat_invite_link',
     'copy_message',
     'edit_message_text',
+    'delete_message',
 ]
-
-SimpleTypes = int | float | bool | str | list | dict
 
 
 def _request(method: str, params: dict):
@@ -223,3 +223,19 @@ def edit_message_text(
     if result is True:
         return result
     return Message.from_dict(result)
+
+
+def delete_message(
+        chat_id: int | str = None,
+        message_id: int = None,
+):
+    from ..context import ctx
+
+    params = _prepare_request_params(
+        locals(),
+        chat_id=ctx.chat_id,
+        message_id=ctx.message_id,
+    )
+
+    result = _request('deleteMessage', params)
+    return result

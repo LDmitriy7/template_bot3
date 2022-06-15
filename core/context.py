@@ -2,8 +2,8 @@ from contextvars import ContextVar
 from dataclasses import dataclass
 
 from .models.documents import Storage
-from .models.new_objects import *
-from .models.tg_objects import *
+from .models.new_objects import CallbackButton
+from .models.tg_objects import Update, Message, CallbackQuery, Chat, User
 
 __all__ = ['ctx']
 

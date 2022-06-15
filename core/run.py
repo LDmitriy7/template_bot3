@@ -2,7 +2,7 @@ import time
 from importlib import import_module
 from pathlib import Path
 
-from core.models.tg_methods import *
+from core.models.tg_methods import get_updates
 from core.models.tg_objects import Update
 from . import exceptions
 from .bot import bot
@@ -12,8 +12,8 @@ from .loader import logger
 
 def _check_handlers(update: Update):
     for handler in bot.handlers:
-        for f in handler.filters:
-            if not f.check(update):
+        for _filter in handler.filters:
+            if not _filter.check(update):
                 break
         else:
             result = handler.func()
@@ -22,8 +22,8 @@ def _check_handlers(update: Update):
 
 def _check_pre_middlewares(update: Update):
     for handler in bot.pre_middlewares:
-        for f in handler.filters:
-            if not f.check(update):
+        for _filter in handler.filters:
+            if not _filter.check(update):
                 break
         else:
             handler.func()
@@ -31,14 +31,14 @@ def _check_pre_middlewares(update: Update):
 
 def _check_post_middlewares(update: Update):
     for handler in bot.post_middlewares:
-        for f in handler.filters:
-            if not f.check(update):
+        for _filter in handler.filters:
+            if not _filter.check(update):
                 break
         else:
             handler.func()
 
 
-def _process_update(update: Update):
+def process_update(update: Update):
     ctx.update = update
 
     try:
@@ -48,13 +48,15 @@ def _process_update(update: Update):
         return result
     except exceptions.Cancel:
         pass
-    except Exception as e:
-        logger.exception(e)
+    except Exception as exc:
+        logger.exception(exc)
+
+    return None
 
 
 def _process_updates(updates: list[Update]):
     for update in updates:
-        _process_update(update)
+        process_update(update)
 
 
 def _start_polling(poll_interval: float):
@@ -70,15 +72,15 @@ def _start_polling(poll_interval: float):
                 offset = updates[-1].update_id + 1
 
             time.sleep(poll_interval)
-        except Exception as e:
-            logger.exception(e)
+        except Exception as exc:
+            logger.exception(exc)
 
 
 def _import_all(package: str):
     dirname = package.replace('.', '/')
-    for f in Path(dirname).glob('*.py'):
-        if not f.stem.startswith('_'):
-            import_module(f'.{f.stem}', package)
+    for file in Path(dirname).glob('*.py'):
+        if not file.stem.startswith('_'):
+            import_module(f'.{file.stem}', package)
 
 
 APP_MODULES = ['handlers', 'middlewares', 'tasks']
@@ -91,9 +93,9 @@ def _init_app():
         app.init()
     else:
         for m_name in APP_MODULES:
-            m = import_module(f'app.{m_name}')
-            if hasattr(m, 'setup'):
-                m.setup()
+            module = import_module(f'app.{m_name}')
+            if hasattr(module, 'setup'):
+                module.setup()
             else:
                 _import_all(f'app.{m_name}')
 

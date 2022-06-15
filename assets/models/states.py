@@ -13,4 +13,4 @@ class CreateAd:
     salary = State()
     schedule = State()
     working_hours = State()
-    additional_info = State()
+    extra_info = State()
