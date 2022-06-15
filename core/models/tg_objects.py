@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from .base import BaseModel
 
@@ -154,6 +154,8 @@ class TgObject(BaseModel):
 
 @dataclass
 class Update(TgObject):
+    """ https://core.telegram.org/bots/api#update """
+
     update_id: int
     message: Message = None
     edited_message: Message = None
@@ -173,6 +175,8 @@ class Update(TgObject):
 
 @dataclass
 class WebhookInfo(TgObject):
+    """ https://core.telegram.org/bots/api#webhookinfo """
+
     url: str
     has_custom_certificate: bool
     pending_update_count: int
@@ -188,6 +192,8 @@ class WebhookInfo(TgObject):
 
 @dataclass
 class User(TgObject):
+    """ https://core.telegram.org/bots/api#user """
+
     id: int
     is_bot: bool
     first_name: str
@@ -201,6 +207,8 @@ class User(TgObject):
 
 @dataclass
 class Chat(TgObject):
+    """ https://core.telegram.org/bots/api#chat """
+
     id: int
     type: str
     title: str = None
@@ -225,6 +233,8 @@ class Chat(TgObject):
 
 @dataclass
 class Message(TgObject):
+    """ https://core.telegram.org/bots/api#message """
+
     message_id: int
     date: int
     chat: Chat
@@ -288,11 +298,15 @@ class Message(TgObject):
 
 @dataclass
 class MessageId(TgObject):
+    """ https://core.telegram.org/bots/api#messageid """
+
     message_id: int
 
 
 @dataclass
 class MessageEntity(TgObject):
+    """ https://core.telegram.org/bots/api#messageentity """
+
     type: str
     offset: int
     length: int
@@ -303,6 +317,8 @@ class MessageEntity(TgObject):
 
 @dataclass
 class PhotoSize(TgObject):
+    """ https://core.telegram.org/bots/api#photosize """
+
     file_id: str
     file_unique_id: str
     width: int
@@ -312,6 +328,8 @@ class PhotoSize(TgObject):
 
 @dataclass
 class Animation(TgObject):
+    """ https://core.telegram.org/bots/api#animation """
+
     file_id: str
     file_unique_id: str
     width: int
@@ -325,6 +343,8 @@ class Animation(TgObject):
 
 @dataclass
 class Audio(TgObject):
+    """ https://core.telegram.org/bots/api#audio """
+
     file_id: str
     file_unique_id: str
     duration: int
@@ -338,6 +358,8 @@ class Audio(TgObject):
 
 @dataclass
 class Document(TgObject):
+    """ https://core.telegram.org/bots/api#document """
+
     file_id: str
     file_unique_id: str
     thumb: PhotoSize = None
@@ -348,6 +370,8 @@ class Document(TgObject):
 
 @dataclass
 class Video(TgObject):
+    """ https://core.telegram.org/bots/api#video """
+
     file_id: str
     file_unique_id: str
     width: int
@@ -361,6 +385,8 @@ class Video(TgObject):
 
 @dataclass
 class VideoNote(TgObject):
+    """ https://core.telegram.org/bots/api#videonote """
+
     file_id: str
     file_unique_id: str
     length: int
@@ -371,6 +397,8 @@ class VideoNote(TgObject):
 
 @dataclass
 class Voice(TgObject):
+    """ https://core.telegram.org/bots/api#voice """
+
     file_id: str
     file_unique_id: str
     duration: int
@@ -380,6 +408,8 @@ class Voice(TgObject):
 
 @dataclass
 class Contact(TgObject):
+    """ https://core.telegram.org/bots/api#contact """
+
     phone_number: str
     first_name: str
     last_name: str = None
@@ -389,18 +419,24 @@ class Contact(TgObject):
 
 @dataclass
 class Dice(TgObject):
+    """ https://core.telegram.org/bots/api#dice """
+
     emoji: str
     value: int
 
 
 @dataclass
 class PollOption(TgObject):
+    """ https://core.telegram.org/bots/api#polloption """
+
     text: str
     voter_count: int
 
 
 @dataclass
 class PollAnswer(TgObject):
+    """ https://core.telegram.org/bots/api#pollanswer """
+
     poll_id: str
     user: User
     option_ids: list[int]
